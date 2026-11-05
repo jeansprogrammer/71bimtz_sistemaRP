@@ -4,13 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>71 BI Mtz — {% block titulo %}Sistema{% endblock %}</title>
-    <link rel="icon" type="image/png" href="/static/simbolo.ico">
-    <link rel="manifest" href="/static/manifest.json">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='simbolo.ico') }}">
+    <link rel="manifest" href="{{ url_for('static', filename='manifest.json') }}">
     <meta name="theme-color" content="#1a3510">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
     <meta name="apple-mobile-web-app-title" content="71 BI Mtz">
-    <link rel="apple-touch-icon" href="/static/logo_71bi.png">
+    <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo_71bi.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
@@ -173,7 +173,7 @@
 </head>
 <body>
 <nav>
-    <img src="/static/logo_71bi.png" class="nav-logo-img" alt="71 BI Mtz">
+    <img src="{{ url_for('static', filename='logo_71bi.png') }}" class="nav-logo-img" alt="71 BI Mtz">
     <div class="nav-titulo">
         <strong>71 BI Mtz</strong>
         <span>Controle de Acesso de Civis</span>
