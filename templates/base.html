@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -13,723 +12,212 @@
     <meta name="apple-mobile-web-app-title" content="71 BI Mtz">
     <link rel="apple-touch-icon" href="{{ url_for('static', filename='logo_71bi.png') }}">
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link
-        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --verde: #2d5a1b;
-            --verde-claro: #3d7a25;
-            --verde-escuro: #1a3510;
-            --amarelo: #c8a83c;
-            --amarelo-claro: #e8c84c;
-            --cinza-bg: #0f1410;
-            --cinza-card: #161e12;
-            --cinza-borda: #2a3a22;
-            --cinza-texto: #8a9e80;
-            --branco: #e8eed4;
-            --vermelho: #8b2a2a;
-            --nav-h: 64px;
-            --tab-h: 62px;
+            --verde: #2d5a1b; --verde-claro: #3d7a25; --verde-escuro: #1a3510;
+            --amarelo: #c8a83c; --amarelo-claro: #e8c84c;
+            --cinza-bg: #0f1410; --cinza-card: #161e12; --cinza-borda: #2a3a22;
+            --cinza-texto: #8a9e80; --branco: #e8eed4; --vermelho: #8b2a2a;
+            --nav-h: 64px; --tab-h: 62px;
         }
-
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-            -webkit-tap-highlight-color: transparent;
-        }
-
-        html {
-            -webkit-text-size-adjust: 100%;
-        }
-
+        * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+        html { -webkit-text-size-adjust: 100%; }
         body {
             font-family: 'IBM Plex Sans', sans-serif;
-            background: var(--cinza-bg);
-            color: var(--branco);
-            min-height: 100vh;
+            background: var(--cinza-bg); color: var(--branco); min-height: 100vh;
             padding-bottom: 0;
         }
-
         body::before {
             content: '';
-            position: fixed;
-            inset: 0;
-            z-index: 0;
-            background: url('{{ url_for(' static', filename=' logo_comsoc.png') }}') center center / 60% auto no-repeat;
-            opacity: 0.04;
-            filter: blur(2px);
-            pointer-events: none;
+            position: fixed; inset: 0; z-index: 0;
+            background: url('/static/logo_comsoc.png') center center / 60% auto no-repeat;
+            opacity: 0.04; filter: blur(2px); pointer-events: none;
         }
 
         /* ===== NAV DESKTOP ===== */
         nav {
-            position: sticky;
-            top: 0;
-            z-index: 50;
+            position: sticky; top: 0; z-index: 50;
             background: var(--verde-escuro);
             border-bottom: 2px solid var(--amarelo);
             padding: 0 1.5rem;
-            display: flex;
-            align-items: center;
-            height: var(--nav-h);
-            gap: 1rem;
+            display: flex; align-items: center; height: var(--nav-h); gap: 1rem;
         }
-
-        .nav-logo-img {
-            height: 46px;
-            width: auto;
-        }
-
-        .nav-titulo {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            border-left: 1px solid rgba(200, 168, 60, 0.3);
-            padding-left: 1rem;
-        }
-
-        .nav-titulo strong {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 1.15rem;
-            letter-spacing: 3px;
-            color: var(--amarelo);
-            line-height: 1.1;
-        }
-
-        .nav-titulo span {
-            font-size: 0.68rem;
-            color: var(--cinza-texto);
-            letter-spacing: 1px;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 0.2rem;
-            margin-left: auto;
-            align-items: center;
-        }
-
-        .nav-links a {
-            color: var(--cinza-texto);
-            text-decoration: none;
-            font-size: 0.75rem;
-            font-weight: 500;
-            letter-spacing: 1.2px;
-            text-transform: uppercase;
-            padding: 0.4rem 0.9rem;
-            border-radius: 3px;
-            transition: all 0.15s;
-        }
-
-        .nav-links a:hover,
-        .nav-links a.ativo {
-            color: var(--amarelo);
-            background: rgba(200, 168, 60, 0.1);
-        }
-
-        .nav-user {
-            display: flex;
-            align-items: center;
-            gap: 0.6rem;
-            border-left: 1px solid rgba(200, 168, 60, 0.3);
-            padding-left: 1rem;
-            margin-left: 0.3rem;
-        }
-
-        .nav-user span {
-            font-size: 0.72rem;
-            color: var(--cinza-texto);
-        }
-
-        .nav-user a.sair {
-            color: #c44;
-            text-decoration: none;
-            font-size: 0.72rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-        }
-
-        .nav-user a.sair:hover {
-            color: #e66;
-        }
+        .nav-logo-img { height: 46px; width: auto; }
+        .nav-titulo { display: flex; flex-direction: column; justify-content: center; border-left: 1px solid rgba(200,168,60,0.3); padding-left: 1rem; }
+        .nav-titulo strong { font-family: 'Bebas Neue', sans-serif; font-size: 1.15rem; letter-spacing: 3px; color: var(--amarelo); line-height: 1.1; }
+        .nav-titulo span { font-size: 0.68rem; color: var(--cinza-texto); letter-spacing: 1px; }
+        .nav-links { display: flex; gap: 0.2rem; margin-left: auto; align-items: center; }
+        .nav-links a { color: var(--cinza-texto); text-decoration: none; font-size: 0.75rem; font-weight: 500; letter-spacing: 1.2px; text-transform: uppercase; padding: 0.4rem 0.9rem; border-radius: 3px; transition: all 0.15s; }
+        .nav-links a:hover, .nav-links a.ativo { color: var(--amarelo); background: rgba(200,168,60,0.1); }
+        .nav-user { display: flex; align-items: center; gap: 0.6rem; border-left: 1px solid rgba(200,168,60,0.3); padding-left: 1rem; margin-left: 0.3rem; }
+        .nav-user span { font-size: 0.72rem; color: var(--cinza-texto); }
+        .nav-user a.sair { color: #c44; text-decoration: none; font-size: 0.72rem; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+        .nav-user a.sair:hover { color: #e66; }
 
         /* ===== TAB BAR MOBILE ===== */
         .tabbar {
             display: none;
-            position: fixed;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            z-index: 50;
-            background: var(--verde-escuro);
-            border-top: 2px solid var(--amarelo);
+            position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+            background: var(--verde-escuro); border-top: 2px solid var(--amarelo);
             padding-bottom: env(safe-area-inset-bottom);
         }
-
-        .tabbar-inner {
-            display: flex;
-            height: var(--tab-h);
-        }
-
+        .tabbar-inner { display: flex; height: var(--tab-h); }
         .tabbar a {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            gap: 0.2rem;
-            color: var(--cinza-texto);
-            text-decoration: none;
-            font-size: 0.6rem;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            font-weight: 600;
+            flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center;
+            gap: 0.2rem; color: var(--cinza-texto); text-decoration: none; font-size: 0.6rem;
+            letter-spacing: 0.5px; text-transform: uppercase; font-weight: 600;
         }
+        .tabbar a .ic { font-size: 1.25rem; line-height: 1; }
+        .tabbar a.ativo { color: var(--amarelo); }
 
-        .tabbar a .ic {
-            font-size: 1.25rem;
-            line-height: 1;
+        .container { max-width: 1280px; margin: 0 auto; padding: 1.5rem 2rem; position: relative; z-index: 1; }
+        .page-header { display: flex; align-items: flex-end; gap: 1rem; margin-bottom: 1.5rem; padding-bottom: 1rem; border-bottom: 1px solid var(--cinza-borda); flex-wrap: wrap; }
+        .page-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; letter-spacing: 3px; color: var(--amarelo); line-height: 1; }
+        .page-sub { color: var(--cinza-texto); font-size: 0.75rem; letter-spacing: 1px; margin-top: 2px; }
+        .card { background: var(--cinza-card); border: 1px solid var(--cinza-borda); border-radius: 6px; padding: 1.5rem; margin-bottom: 1rem; }
+        .card-title { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; color: var(--amarelo); font-size: 1rem; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 1px solid var(--cinza-borda); }
+        .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem; }
+        .form-group { display: flex; flex-direction: column; gap: 0.35rem; }
+        label { font-size: 0.68rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cinza-texto); }
+        input, select, textarea {
+            background: #0a0f08; border: 1px solid var(--cinza-borda); border-radius: 4px;
+            color: var(--branco); padding: 0.6rem 0.75rem;
+            font-family: 'IBM Plex Sans', sans-serif; font-size: 0.95rem; transition: border-color 0.15s; width: 100%;
         }
-
-        .tabbar a.ativo {
-            color: var(--amarelo);
-        }
-
-        .container {
-            max-width: 1280px;
-            margin: 0 auto;
-            padding: 1.5rem 2rem;
-            position: relative;
-            z-index: 1;
-        }
-
-        .page-header {
-            display: flex;
-            align-items: flex-end;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--cinza-borda);
-            flex-wrap: wrap;
-        }
-
-        .page-title {
-            font-family: 'Bebas Neue', sans-serif;
-            font-size: 2rem;
-            letter-spacing: 3px;
-            color: var(--amarelo);
-            line-height: 1;
-        }
-
-        .page-sub {
-            color: var(--cinza-texto);
-            font-size: 0.75rem;
-            letter-spacing: 1px;
-            margin-top: 2px;
-        }
-
-        .card {
-            background: var(--cinza-card);
-            border: 1px solid var(--cinza-borda);
-            border-radius: 6px;
-            padding: 1.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .card-title {
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 2px;
-            color: var(--amarelo);
-            font-size: 1rem;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--cinza-borda);
-        }
-
-        .form-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1rem;
-        }
-
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            gap: 0.35rem;
-        }
-
-        label {
-            font-size: 0.68rem;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--cinza-texto);
-        }
-
-        input,
-        select,
-        textarea {
-            background: #0a0f08;
-            border: 1px solid var(--cinza-borda);
-            border-radius: 4px;
-            color: var(--branco);
-            padding: 0.6rem 0.75rem;
-            font-family: 'IBM Plex Sans', sans-serif;
-            font-size: 0.95rem;
-            transition: border-color 0.15s;
-            width: 100%;
-        }
-
-        input:focus,
-        select:focus,
-        textarea:focus {
-            outline: none;
-            border-color: var(--amarelo);
-        }
-
-        textarea {
-            resize: vertical;
-            min-height: 65px;
-        }
-
-        select option {
-            background: #1a2515;
-        }
-
+        input:focus, select:focus, textarea:focus { outline: none; border-color: var(--amarelo); }
+        textarea { resize: vertical; min-height: 65px; }
+        select option { background: #1a2515; }
         .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.4rem;
-            padding: 0.6rem 1.1rem;
-            border: none;
-            border-radius: 4px;
-            font-family: 'IBM Plex Sans', sans-serif;
-            font-size: 0.78rem;
-            font-weight: 600;
-            letter-spacing: 1px;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.15s;
-            text-decoration: none;
+            display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+            padding: 0.6rem 1.1rem; border: none; border-radius: 4px;
+            font-family: 'IBM Plex Sans', sans-serif; font-size: 0.78rem; font-weight: 600;
+            letter-spacing: 1px; text-transform: uppercase; cursor: pointer; transition: all 0.15s; text-decoration: none;
             min-height: 40px;
         }
-
-        .btn-primary {
-            background: var(--amarelo);
-            color: var(--verde-escuro);
-        }
-
-        .btn-primary:hover {
-            background: var(--amarelo-claro);
-        }
-
-        .btn-secondary {
-            background: transparent;
-            border: 1px solid var(--cinza-borda);
-            color: var(--cinza-texto);
-        }
-
-        .btn-secondary:hover {
-            border-color: var(--amarelo);
-            color: var(--amarelo);
-        }
-
-        .btn-danger {
-            background: transparent;
-            border: 1px solid var(--vermelho);
-            color: #c44;
-        }
-
-        .btn-danger:hover {
-            background: var(--vermelho);
-            color: white;
-        }
-
-        .btn-sm {
-            padding: 0.35rem 0.65rem;
-            font-size: 0.7rem;
-            min-height: 32px;
-        }
-
-        .btn-verde {
-            background: var(--verde-claro);
-            color: white;
-        }
-
-        .btn-verde:hover {
-            background: var(--verde);
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 0.85rem;
-        }
-
-        th {
-            text-align: left;
-            font-size: 0.67rem;
-            letter-spacing: 1.5px;
-            text-transform: uppercase;
-            color: var(--cinza-texto);
-            padding: 0.65rem 0.7rem;
-            border-bottom: 1px solid var(--cinza-borda);
-        }
-
-        td {
-            padding: 0.6rem 0.7rem;
-            border-bottom: 1px solid rgba(42, 58, 34, 0.5);
-            vertical-align: middle;
-        }
-
-        tr:hover td {
-            background: rgba(255, 255, 255, 0.02);
-        }
-
-        .mono {
-            font-family: 'IBM Plex Mono', monospace;
-            font-size: 0.8rem;
-        }
-
-        .badge {
-            display: inline-block;
-            padding: 0.18rem 0.55rem;
-            border-radius: 3px;
-            font-size: 0.68rem;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-        }
-
-        .badge-verde {
-            background: rgba(45, 90, 27, 0.4);
-            color: #7dc95a;
-            border: 1px solid #3d7a25;
-        }
-
-        .badge-amarelo {
-            background: rgba(200, 168, 60, 0.15);
-            color: var(--amarelo);
-            border: 1px solid rgba(200, 168, 60, 0.3);
-        }
-
-        .badge-cinza {
-            background: rgba(100, 120, 90, 0.2);
-            color: var(--cinza-texto);
-            border: 1px solid var(--cinza-borda);
-        }
-
-        .badge-azul {
-            background: rgba(40, 80, 160, 0.3);
-            color: #7ab;
-            border: 1px solid #3a6a9a;
-        }
-
-        #toast {
-            position: fixed;
-            bottom: 2rem;
-            right: 2rem;
-            background: var(--verde-claro);
-            color: white;
-            padding: 0.75rem 1.3rem;
-            border-radius: 6px;
-            font-size: 0.83rem;
-            font-weight: 500;
-            transform: translateY(100px);
-            opacity: 0;
-            transition: all 0.3s;
-            z-index: 999;
-            max-width: 90vw;
-        }
-
-        #toast.show {
-            transform: translateY(0);
-            opacity: 1;
-        }
-
-        #toast.erro {
-            background: var(--vermelho);
-        }
-
-        .modal-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.75);
-            z-index: 100;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .modal-overlay.open {
-            display: flex;
-        }
-
-        .modal {
-            background: var(--cinza-card);
-            border: 1px solid var(--cinza-borda);
-            border-radius: 8px;
-            padding: 1.75rem;
-            width: 95%;
-            max-width: 560px;
-            position: relative;
-            max-height: 90vh;
-            overflow-y: auto;
-        }
-
-        .modal-title {
-            font-family: 'Bebas Neue', sans-serif;
-            letter-spacing: 2px;
-            color: var(--amarelo);
-            font-size: 1.25rem;
-            margin-bottom: 1.25rem;
-        }
-
-        .modal-close {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background: none;
-            border: none;
-            color: var(--cinza-texto);
-            font-size: 1.1rem;
-            cursor: pointer;
-            padding: 0.4rem;
-        }
-
-        .modal-close:hover {
-            color: white;
-        }
-
-        .modal-footer {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: flex-end;
-            margin-top: 1.25rem;
-            padding-top: 1rem;
-            border-top: 1px solid var(--cinza-borda);
-        }
-
-        .sep {
-            color: var(--cinza-borda);
-            font-size: 0.7rem;
-            letter-spacing: 2px;
-            text-transform: uppercase;
-            padding: 0.5rem 0;
-            display: block;
-            margin: 0.75rem 0 0.5rem;
-            border-top: 1px solid var(--cinza-borda);
-        }
+        .btn-primary { background: var(--amarelo); color: var(--verde-escuro); }
+        .btn-primary:hover { background: var(--amarelo-claro); }
+        .btn-secondary { background: transparent; border: 1px solid var(--cinza-borda); color: var(--cinza-texto); }
+        .btn-secondary:hover { border-color: var(--amarelo); color: var(--amarelo); }
+        .btn-danger { background: transparent; border: 1px solid var(--vermelho); color: #c44; }
+        .btn-danger:hover { background: var(--vermelho); color: white; }
+        .btn-sm { padding: 0.35rem 0.65rem; font-size: 0.7rem; min-height: 32px; }
+        .btn-verde { background: var(--verde-claro); color: white; }
+        .btn-verde:hover { background: var(--verde); }
+        table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+        th { text-align: left; font-size: 0.67rem; letter-spacing: 1.5px; text-transform: uppercase; color: var(--cinza-texto); padding: 0.65rem 0.7rem; border-bottom: 1px solid var(--cinza-borda); }
+        td { padding: 0.6rem 0.7rem; border-bottom: 1px solid rgba(42,58,34,0.5); vertical-align: middle; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        .mono { font-family: 'IBM Plex Mono', monospace; font-size: 0.8rem; }
+        .badge { display: inline-block; padding: 0.18rem 0.55rem; border-radius: 3px; font-size: 0.68rem; font-weight: 600; letter-spacing: 0.5px; }
+        .badge-verde { background: rgba(45,90,27,0.4); color: #7dc95a; border: 1px solid #3d7a25; }
+        .badge-amarelo { background: rgba(200,168,60,0.15); color: var(--amarelo); border: 1px solid rgba(200,168,60,0.3); }
+        .badge-cinza { background: rgba(100,120,90,0.2); color: var(--cinza-texto); border: 1px solid var(--cinza-borda); }
+        .badge-azul { background: rgba(40,80,160,0.3); color: #7ab; border: 1px solid #3a6a9a; }
+        #toast { position: fixed; bottom: 2rem; right: 2rem; background: var(--verde-claro); color: white; padding: 0.75rem 1.3rem; border-radius: 6px; font-size: 0.83rem; font-weight: 500; transform: translateY(100px); opacity: 0; transition: all 0.3s; z-index: 999; max-width: 90vw; }
+        #toast.show { transform: translateY(0); opacity: 1; }
+        #toast.erro { background: var(--vermelho); }
+        .modal-overlay { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.75); z-index: 100; align-items: center; justify-content: center; }
+        .modal-overlay.open { display: flex; }
+        .modal { background: var(--cinza-card); border: 1px solid var(--cinza-borda); border-radius: 8px; padding: 1.75rem; width: 95%; max-width: 560px; position: relative; max-height: 90vh; overflow-y: auto; }
+        .modal-title { font-family: 'Bebas Neue', sans-serif; letter-spacing: 2px; color: var(--amarelo); font-size: 1.25rem; margin-bottom: 1.25rem; }
+        .modal-close { position: absolute; top: 1rem; right: 1rem; background: none; border: none; color: var(--cinza-texto); font-size: 1.1rem; cursor: pointer; padding: 0.4rem; }
+        .modal-close:hover { color: white; }
+        .modal-footer { display: flex; gap: 0.5rem; justify-content: flex-end; margin-top: 1.25rem; padding-top: 1rem; border-top: 1px solid var(--cinza-borda); }
+        .sep { color: var(--cinza-borda); font-size: 0.7rem; letter-spacing: 2px; text-transform: uppercase; padding: 0.5rem 0; display: block; margin: 0.75rem 0 0.5rem; border-top: 1px solid var(--cinza-borda); }
 
         /* ===== Cards de linha (mobile) — usados via data-label nas <td> ===== */
-        .row-card {
-            display: none;
-        }
+        .row-card { display: none; }
 
         /* ===================== MOBILE ===================== */
         @media (max-width: 860px) {
-            nav {
-                display: none;
-            }
+            nav { display: none; }
+            .tabbar { display: block; }
+            body { padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom)); }
 
-            .tabbar {
-                display: block;
-            }
+            .container { padding: 1rem; }
+            .page-header { flex-direction: column; align-items: stretch; gap: 0.75rem; }
+            .page-header > div:first-child { display: flex; flex-direction: column; }
+            .page-title { font-size: 1.5rem; }
+            .page-header > div[style] { margin-left: 0 !important; flex-wrap: wrap; }
+            .page-header input[type="text"] { width: 100% !important; flex: 1; }
+            .btn { flex: 1; min-width: fit-content; }
 
-            body {
-                padding-bottom: calc(var(--tab-h) + env(safe-area-inset-bottom));
-            }
-
-            .container {
-                padding: 1rem;
-            }
-
-            .page-header {
-                flex-direction: column;
-                align-items: stretch;
-                gap: 0.75rem;
-            }
-
-            .page-header>div:first-child {
-                display: flex;
-                flex-direction: column;
-            }
-
-            .page-title {
-                font-size: 1.5rem;
-            }
-
-            .page-header>div[style] {
-                margin-left: 0 !important;
-                flex-wrap: wrap;
-            }
-
-            .page-header input[type="text"] {
-                width: 100% !important;
-                flex: 1;
-            }
-
-            .btn {
-                flex: 1;
-                min-width: fit-content;
-            }
-
-            .card {
-                padding: 1rem;
-            }
-
-            .form-grid {
-                grid-template-columns: 1fr !important;
-            }
+            .card { padding: 1rem; }
+            .form-grid { grid-template-columns: 1fr !important; }
 
             /* Tabela -> lista de cards */
-            table thead {
-                display: none;
-            }
-
-            table,
-            tbody,
-            tr,
-            td {
-                display: block;
-                width: 100%;
-            }
-
-            table {
-                border: none;
-            }
-
+            table thead { display: none; }
+            table, tbody, tr, td { display: block; width: 100%; }
+            table { border: none; }
             tbody tr {
-                background: var(--cinza-card);
-                border: 1px solid var(--cinza-borda);
-                border-radius: 6px;
-                margin-bottom: 0.75rem;
-                padding: 0.75rem;
-                position: relative;
+                background: var(--cinza-card); border: 1px solid var(--cinza-borda);
+                border-radius: 6px; margin-bottom: 0.75rem; padding: 0.75rem; position: relative;
             }
-
-            tbody tr td {
-                border: none;
-                padding: 0.3rem 0;
-                display: flex;
-                justify-content: space-between;
-                gap: 0.75rem;
-                align-items: flex-start;
-            }
-
+            tbody tr td { border: none; padding: 0.3rem 0; display: flex; justify-content: space-between; gap: 0.75rem; align-items: flex-start; }
             tbody tr td::before {
-                content: attr(data-label);
-                font-size: 0.62rem;
-                letter-spacing: 1px;
-                text-transform: uppercase;
-                color: var(--cinza-texto);
-                flex-shrink: 0;
-                padding-top: 0.1rem;
+                content: attr(data-label); font-size: 0.62rem; letter-spacing: 1px; text-transform: uppercase;
+                color: var(--cinza-texto); flex-shrink: 0; padding-top: 0.1rem;
             }
+            tbody tr td:empty, tbody tr td[data-label=""] { display: none; }
+            tbody tr td[data-nolabel]::before { content: ''; }
+            tbody tr td[data-actions] { justify-content: flex-end; gap: 0.5rem; margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px solid var(--cinza-borda); }
 
-            tbody tr td:empty,
-            tbody tr td[data-label=""] {
-                display: none;
-            }
+            .modal { width: 100%; max-width: 100%; height: 100%; max-height: 100%; border-radius: 0; padding: 1.25rem; padding-top: 3.5rem; }
+            .modal-overlay.open { align-items: flex-start; }
+            .modal-footer { position: sticky; bottom: 0; background: var(--cinza-card); margin-top: 1rem; padding-bottom: 0.5rem; }
 
-            tbody tr td[data-nolabel]::before {
-                content: '';
-            }
-
-            tbody tr td[data-actions] {
-                justify-content: flex-end;
-                gap: 0.5rem;
-                margin-top: 0.5rem;
-                padding-top: 0.5rem;
-                border-top: 1px solid var(--cinza-borda);
-            }
-
-            .modal {
-                width: 100%;
-                max-width: 100%;
-                height: 100%;
-                max-height: 100%;
-                border-radius: 0;
-                padding: 1.25rem;
-                padding-top: 3.5rem;
-            }
-
-            .modal-overlay.open {
-                align-items: flex-start;
-            }
-
-            .modal-footer {
-                position: sticky;
-                bottom: 0;
-                background: var(--cinza-card);
-                margin-top: 1rem;
-                padding-bottom: 0.5rem;
-            }
-
-            #toast {
-                left: 1rem;
-                right: 1rem;
-                bottom: calc(var(--tab-h) + 1rem + env(safe-area-inset-bottom));
-                text-align: center;
-            }
+            #toast { left: 1rem; right: 1rem; bottom: calc(var(--tab-h) + 1rem + env(safe-area-inset-bottom)); text-align: center; }
         }
     </style>
 </head>
-
 <body>
-    <nav>
-        <img src="{{ url_for('static', filename='logo_71bi.png') }}" class="nav-logo-img" alt="71 BI Mtz">
-        <div class="nav-titulo">
-            <strong>71 BI Mtz</strong>
-            <span>Controle de Acesso de Civis</span>
-        </div>
-        <div class="nav-links">
-            <a href="/relacao" class="{% if request.path == '/relacao' %}ativo{% endif %}">📋 Relação do Dia</a>
-            <a href="/pessoas" class="{% if request.path == '/pessoas' %}ativo{% endif %}">👤 Cadastro</a>
-            <a href="/usuarios" class="{% if request.path == '/usuarios' %}ativo{% endif %}">🔑 Usuários</a>
-            {% if session.username %}
-            <div class="nav-user">
-                <span>{{ session.username }}</span>
-                <a href="/logout" class="sair">Sair</a>
-            </div>
-            {% endif %}
-        </div>
-    </nav>
-
-    {% block content %}{% endblock %}
-
-    <div class="tabbar">
-        <div class="tabbar-inner">
-            <a href="/relacao" class="{% if request.path == '/relacao' %}ativo{% endif %}"><span
-                    class="ic">📋</span>Relação</a>
-            <a href="/pessoas" class="{% if request.path == '/pessoas' %}ativo{% endif %}"><span
-                    class="ic">👥</span>Pessoas</a>
-            <a href="/cadastro" class="{% if request.path == '/cadastro' %}ativo{% endif %}"><span
-                    class="ic">➕</span>Cadastrar</a>
-            <a href="/usuarios" class="{% if request.path == '/usuarios' %}ativo{% endif %}"><span
-                    class="ic">🔑</span>Usuários</a>
-            <a href="/logout"><span class="ic">🚪</span>Sair</a>
-        </div>
+<nav>
+    <img src="{{ url_for('static', filename='logo_71bi.png') }}" class="nav-logo-img" alt="71 BI Mtz">
+    <div class="nav-titulo">
+        <strong>71 BI Mtz</strong>
+        <span>Controle de Acesso de Civis</span>
     </div>
+    <div class="nav-links">
+        <a href="/relacao" class="{% if request.path == '/relacao' %}ativo{% endif %}">📋 Relação do Dia</a>
+        <a href="/pessoas" class="{% if request.path == '/pessoas' %}ativo{% endif %}">👤 Cadastro</a>
+        <a href="/usuarios" class="{% if request.path == '/usuarios' %}ativo{% endif %}">🔑 Usuários</a>
+        {% if session.username %}
+        <div class="nav-user">
+            <span>{{ session.username }}</span>
+            <a href="/logout" class="sair">Sair</a>
+        </div>
+        {% endif %}
+    </div>
+</nav>
 
-    <div id="toast"></div>
-    <script>
-        function toast(msg, erro = false) {
-            const t = document.getElementById('toast');
-            t.textContent = msg; t.className = 'show' + (erro ? ' erro' : '');
-            setTimeout(() => t.className = '', 2800);
-        }
-        async function api(url, body = null) {
-            const opts = body ? { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) } : {};
-            const r = await fetch(url, opts); return r.json();
-        }
-        if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('/static/sw.js').catch(() => { });
-        }
-    </script>
-    {% block scripts %}{% endblock %}
+{% block content %}{% endblock %}
+
+<div class="tabbar">
+    <div class="tabbar-inner">
+        <a href="/relacao" class="{% if request.path == '/relacao' %}ativo{% endif %}"><span class="ic">📋</span>Relação</a>
+        <a href="/pessoas" class="{% if request.path == '/pessoas' %}ativo{% endif %}"><span class="ic">👥</span>Pessoas</a>
+        <a href="/cadastro" class="{% if request.path == '/cadastro' %}ativo{% endif %}"><span class="ic">➕</span>Cadastrar</a>
+        <a href="/usuarios" class="{% if request.path == '/usuarios' %}ativo{% endif %}"><span class="ic">🔑</span>Usuários</a>
+        <a href="/logout"><span class="ic">🚪</span>Sair</a>
+    </div>
+</div>
+
+<div id="toast"></div>
+<script>
+function toast(msg, erro=false) {
+    const t = document.getElementById('toast');
+    t.textContent = msg; t.className = 'show' + (erro ? ' erro' : '');
+    setTimeout(() => t.className = '', 2800);
+}
+async function api(url, body=null) {
+    const opts = body ? {method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(body)} : {};
+    const r = await fetch(url, opts); return r.json();
+}
+if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/static/sw.js').catch(()=>{});
+}
+</script>
+{% block scripts %}{% endblock %}
 </body>
-
 </html>
