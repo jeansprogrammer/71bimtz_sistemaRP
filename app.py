@@ -17,6 +17,8 @@ app.config.update(
     SESSION_COOKIE_SECURE=os.environ.get("VERCEL") == "1",  # https só em produção
 )
 
+init_db()
+
 app.jinja_env.filters['doc'] = formatar_documento
 app.jinja_env.filters['tel'] = formatar_telefone
 
@@ -279,6 +281,26 @@ def fechar_servico():
     conn.commit()
     conn.close()
     return jsonify({'ok': True})
+
+
+# ── BOOTSTRAP: criação do primeiro usuário em produção (remover/desativar após uso) ──
+
+@app.route('/bootstrap-admin')
+def bootstrap_admin():
+    token = request.args.get('token', '')
+    esperado = os.environ.get('BOOTSTRAP_TOKEN', '')
+    if not esperado or token != esperado:
+        return "Acesso negado", 403
+
+    username = request.args.get('username', '').strip()
+    senha = request.args.get('senha', '').strip()
+    if not username or not senha:
+        return "Uso: /bootstrap-admin?token=XXX&username=admin&senha=senha123", 400
+
+    ok, msg = criar_usuario(username, senha)
+    if ok:
+        return f"Usuário '{username}' criado com sucesso!"
+    return f"Erro: {msg}", 400
 
 
 # ── CLI: criação do primeiro usuário ────────────────────────────────────
