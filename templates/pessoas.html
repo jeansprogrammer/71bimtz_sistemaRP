@@ -1,0 +1,120 @@
+{% extends "base.html" %}
+{% block titulo %}Pessoas Cadastradas{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <div><div class="page-title">Pessoas Cadastradas</div><div class="page-sub">{{ pessoas|length }} registro(s)</div></div>
+        <div style="margin-left:auto;display:flex;gap:0.5rem;align-items:center;">
+            <input type="text" id="filtro" placeholder="🔍 Nome ou CPF..." style="width:220px;" oninput="filtrar(this.value)">
+            <a href="/cadastro" class="btn btn-primary">+ Nova Pessoa</a>
+        </div>
+    </div>
+    <div class="card" style="padding:0;overflow:hidden;">
+        {% if pessoas %}
+        <div style="overflow-x:auto;">
+        <table>
+            <thead><tr>
+                <th>Nome</th><th>CPF / Doc</th><th>DDD</th><th>Telefone</th><th>Veículo</th><th>Obs</th><th></th>
+            </tr></thead>
+            <tbody id="tbody">
+            {% for p in pessoas %}
+            <tr data-nome="{{ p.nome|lower }}" data-cpf="{{ p.cpf }}" id="p-{{ p.id }}">
+                <td data-label="Nome"><strong>{{ p.nome }}</strong></td>
+                <td data-label="CPF/Doc" class="mono" style="font-size:0.8rem;">{{ p.cpf | doc }}</td>
+                <td data-label="DDD" class="mono" style="color:var(--cinza-texto);">{{ p.ddd or '—' }}</td>
+                <td data-label="Telefone" class="mono" style="color:var(--cinza-texto);">{{ p.telefone | tel if p.telefone else '—' }}</td>
+                <td data-label="Veículo" style="color:var(--cinza-texto);">{{ p.veiculo or '—' }}</td>
+                <td data-label="Obs" style="color:var(--cinza-texto);font-size:0.78rem;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ p.observacao or '—' }}</td>
+                <td data-actions style="white-space:nowrap;">
+                    <button class="btn btn-sm btn-secondary"
+                        data-id="{{ p.id }}"
+                        data-nome="{{ p.nome | e }}"
+                        data-cpf="{{ p.cpf | e }}"
+                        data-ddd="{{ p.ddd or '' }}"
+                        data-tel="{{ p.telefone or '' }}"
+                        data-veiculo="{{ p.veiculo or '' }}"
+                        data-obs="{{ p.observacao or '' | e }}"
+                        onclick="abrirEditBtn(this)">✏️</button>
+                    <button class="btn btn-sm btn-danger" data-id="{{ p.id }}" data-nome="{{ p.nome | e }}" onclick="excluir(this.dataset.id, this.dataset.nome)">✕</button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% else %}
+        <div style="text-align:center;padding:3rem;color:var(--cinza-texto);">
+            <div style="font-size:2rem;margin-bottom:0.5rem;">👤</div>
+            Nenhuma pessoa cadastrada.
+            <br><a href="/cadastro" class="btn btn-primary" style="margin-top:1rem;display:inline-flex;">+ Cadastrar</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<div class="modal-overlay" id="editOverlay">
+<div class="modal" style="max-width:520px;">
+    <button class="modal-close" onclick="fecharEdit()">✕</button>
+    <div class="modal-title">Editar Pessoa</div>
+    <input type="hidden" id="eId">
+    <div class="form-grid">
+        <div class="form-group" style="grid-column:1/-1;"><label>Nome *</label><input type="text" id="eNome"></div>
+        <div class="form-group" style="grid-column:1/-1;"><label>CPF / Doc *</label><input type="text" id="eCpf"></div>
+    </div>
+    <div class="form-grid" style="grid-template-columns:80px 1fr;margin-top:0.75rem;">
+        <div class="form-group"><label>DDD</label><input type="text" id="eDDD" maxlength="3"></div>
+        <div class="form-group"><label>Telefone</label><input type="text" id="eTel"></div>
+    </div>
+    <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-top:0.75rem;">
+        <div class="form-group"><label>Placa</label><input type="text" id="ePlaca" placeholder="Ex: RSI4G23" style="text-transform:uppercase;" maxlength="8"></div>
+        <div class="form-group"><label>Modelo</label><input type="text" id="eModelo" placeholder="Ex: Corsa, CG 160"></div>
+    </div>
+    <div class="form-group" style="margin-top:0.75rem;"><label>Observação</label><textarea id="eObs"></textarea></div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="fecharEdit()">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarEdit()">Salvar</button>
+    </div>
+</div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+function filtrar(q){q=q.toLowerCase();document.querySelectorAll('#tbody tr').forEach(tr=>{tr.style.display=(tr.dataset.nome.includes(q)||tr.dataset.cpf.includes(q))?'':'none';});}
+function abrirEditBtn(btn){
+    document.getElementById('eId').value=btn.dataset.id;
+    document.getElementById('eNome').value=btn.dataset.nome;
+    document.getElementById('eCpf').value=btn.dataset.cpf;
+    document.getElementById('eDDD').value=btn.dataset.ddd;
+    document.getElementById('eTel').value=btn.dataset.tel;
+    const v=btn.dataset.veiculo||'';
+    const partes=v.split(' - ');
+    document.getElementById('ePlaca').value=partes[0]||'';
+    document.getElementById('eModelo').value=partes.slice(1).join(' - ')||'';
+    document.getElementById('eObs').value=btn.dataset.obs;
+    document.getElementById('editOverlay').classList.add('open');
+}
+function fecharEdit(){document.getElementById('editOverlay').classList.remove('open');}
+async function salvarEdit(){
+    const placa=document.getElementById('ePlaca').value.trim().toUpperCase();
+    const modelo=document.getElementById('eModelo').value.trim();
+    const veiculo = placa && modelo ? `${placa} - ${modelo}` : placa || modelo;
+    const r=await api('/api/editar_pessoa',{
+        id:parseInt(document.getElementById('eId').value),
+        nome:document.getElementById('eNome').value.trim(),
+        cpf:document.getElementById('eCpf').value.trim(),
+        ddd:document.getElementById('eDDD').value.trim(),
+        telefone:document.getElementById('eTel').value.trim(),
+        veiculo,
+        observacao:document.getElementById('eObs').value.trim(),
+    });
+    if(r.ok){toast('Atualizado!');fecharEdit();setTimeout(()=>location.reload(),700);}
+    else toast(r.erro||'Erro',true);
+}
+async function excluir(id,nome){
+    if(!confirm(`Excluir "${nome}"?\nO histórico de visitas será mantido.`))return;
+    const r=await api('/api/excluir_pessoa',{id});
+    if(r.ok){document.getElementById('p-'+id).remove();toast('Removido.');}
+}
+document.getElementById('editOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('editOverlay'))fecharEdit();});
+</script>
+{% endblock %}

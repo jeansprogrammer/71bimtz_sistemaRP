@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<title>Relação de Civis — {{ dia }}/{{ mes }}/20{{ ano }} — 71 BI Mtz</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;}
+body{font-family:'Times New Roman',Times,serif;font-size:10pt;color:#000;background:#fff;padding:16px;}
+
+/* CABEÇALHO */
+.cabecalho{
+    display:grid;
+    grid-template-columns:90px 1fr 115px;
+    align-items:start;
+    margin-bottom:8px;
+}
+/* Esquerda: VISTO centralizado sobre "Oficial de Dia" */
+.cab-esq{display:flex;flex-direction:column;align-items:center;}
+.cab-esq .visto-label{font-size:10pt;text-transform:uppercase;margin-bottom:0;}
+.cab-esq .ass-linha{border-top:1px solid #000;margin-top:30px;padding-top:2px;
+    font-size:10pt;text-transform:uppercase;display:inline-block;
+    min-width:80px;text-align:center;}
+
+/* Centro */
+.cab-centro{text-align:center;}
+.cab-centro img{height:60px;width:auto;display:block;margin:0 auto 4px;}
+.cab-centro .cab-texto{font-size:10pt;font-weight:bold;text-transform:uppercase;line-height:1.4;}
+
+/* Direita: VISTO centralizado sobre "Adjunto ao Oficial de Dia" + DOC NR abaixo */
+.cab-dir{display:flex;flex-direction:column;align-items:center;}
+.cab-dir .visto-label{font-size:10pt;text-transform:uppercase;margin-bottom:0;}
+.cab-dir .ass-linha{border-top:1px solid #000;margin-top:30px;padding-top:2px;
+    font-size:10pt;text-transform:uppercase;display:inline-block;
+    min-width:90px;text-align:center;}
+.doc-nr{border:2px solid #000;padding:2px 8px;font-weight:bold;
+    font-size:10pt;display:inline-block;margin-top:6px;text-align:center;}
+
+/* TÍTULO */
+.titulo-relacao{text-align:center;font-size:14pt;font-weight:bold;
+    text-transform:uppercase;margin:8px 0 4px;}
+.servico-linha{text-align:center;font-size:12pt;margin-bottom:8px;}
+.servico-linha span{border-bottom:1px solid #000;display:inline-block;}
+
+/* TABELA */
+table{width:100%;border-collapse:collapse;font-size:10pt;}
+th{
+    background:#e8e8e8;color:#000;
+    padding:3px 3px;text-align:center;
+    font-size:10pt;font-weight:bold;text-transform:uppercase;
+    border:1px solid #000;line-height:1.2;
+}
+td{padding:2px 3px;border:1px solid #000;vertical-align:middle;
+    font-size:10pt;height:15px;font-weight:normal;text-transform:uppercase;}
+.td-nome{min-width:135px;}
+.td-cpf{text-align:center;width:90px;}
+.td-ddd{text-align:center;width:28px;}
+.td-tel{text-align:center;width:95px;white-space:nowrap;}
+.td-veiculo{width:110px;}
+.td-cracha{text-align:center;width:50px;}
+.td-secao{text-align:center;width:65px;}
+.td-part{text-align:center;width:28px;}
+.td-sv{text-align:center;width:24px;}
+.td-obs{width:45px;}
+.td-hora{text-align:center;width:38px;}
+.x-marca{font-weight:bold;font-size:11pt;}
+
+/* RODAPÉ */
+.rodape{margin-top:16px;}
+.rodape-local{text-align:center;font-size:12pt;margin-bottom:20px;}
+.rodape-ass{display:flex;justify-content:center;}
+.assinatura{text-align:center;min-width:220px;}
+.assinatura .linha-ass{border-top:1px solid #000;margin-top:36px;padding-top:3px;}
+.assinatura .nome-grad{font-size:12pt;font-weight:bold;text-transform:uppercase;}
+.assinatura .cargo{font-size:12pt;text-transform:uppercase;}
+
+/* CONTINUAÇÃO */
+.cabecalho-continuacao{font-size:9pt;text-align:right;
+    padding-bottom:4px;border-bottom:1px solid #555;margin-bottom:6px;color:#555;}
+
+@media print{
+    body{padding:8px;}
+    .no-print{display:none!important;}
+    @page{margin:1.8cm;size:A4 landscape;}
+    .quebra{page-break-before:always;}
+}
+.btn-imprimir{display:block;margin:0 auto 16px;padding:9px 26px;
+    background:#2d5a1b;color:#fff;border:none;border-radius:4px;
+    font-size:11pt;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;}
+.btn-imprimir:hover{background:#3d7a25;}
+</style>
+</head>
+<body>
+
+<button class="btn-imprimir no-print" onclick="window.print()">🖨️ IMPRIMIR RELAÇÃO</button>
+
+{% set linhas_por_pagina = 20 %}
+{% set total = entradas|length %}
+{% set paginas = [((total / linhas_por_pagina)|round(0,'ceil'))|int, 1]|max %}
+
+{% for p in range(paginas) %}
+{% set ini = p * linhas_por_pagina %}
+{% set bloco = entradas[ini : ini + linhas_por_pagina] %}
+
+<div class="{% if p > 0 %}quebra{% endif %}">
+
+{% if p == 0 %}
+<div class="cabecalho">
+    <div class="cab-esq">
+        <span class="visto-label">VISTO</span>
+        <span class="ass-linha">Oficial de Dia</span>
+    </div>
+    <div class="cab-centro">
+        <img src="/static/brasao_republica.png" alt="Brasão">
+        <div class="cab-texto">
+            MINISTÉRIO DA DEFESA<br>
+            EXÉRCITO BRASILEIRO<br>
+            71º BATALHÃO DE INFANTARIA MOTORIZADO<br>
+            BATALHÃO DUARTE COELHO/1993
+        </div>
+    </div>
+    <div class="cab-dir">
+        <span class="visto-label">VISTO</span>
+        <span class="ass-linha">Adjunto ao<br>Oficial de Dia</span>
+        <span class="doc-nr">DOC NR 03/S2</span>
+    </div>
+</div>
+
+<div class="titulo-relacao">Relação do Pessoal Civil que Entrou no Quartel:</div>
+<div class="servico-linha">
+    Serviço do dia <span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    de <span style="min-width:110px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+    de 202__. ( <span style="min-width:90px;">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span> )
+</div>
+
+{% else %}
+<div class="cabecalho-continuacao">
+    71º BI Mtz — Relação de Civis — {{ dia }}/{{ mes }}/20{{ ano }} — (folha {{ p+1 }})
+</div>
+{% endif %}
+
+<table>
+    <thead>
+        <tr>
+            <th rowspan="2" class="td-nome">Nome Completo</th>
+            <th rowspan="2" class="td-cpf">CPF ou Doc. de<br>Identificação<br>(Org Exp)</th>
+            <th colspan="2">Telefone Contato</th>
+            <th rowspan="2" class="td-veiculo">Placa / Veículo</th>
+            <th rowspan="2" class="td-cracha">Crachá</th>
+            <th rowspan="2" class="td-secao">Seção</th>
+            <th colspan="2">Motivo<br>(Marcar X)</th>
+            <th rowspan="2" class="td-obs">Observação<br><span style="font-weight:normal;font-size:9pt;">Ex: Entregar Material</span></th>
+            <th colspan="2">Hora</th>
+        </tr>
+        <tr>
+            <th class="td-ddd">DDD</th>
+            <th class="td-tel">Número</th>
+            <th class="td-part">Partic.<br>ular</th>
+            <th class="td-sv">SV</th>
+            <th class="td-hora">Entrada</th>
+            <th class="td-hora">Saída</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for e in bloco %}
+    <tr>
+        <td class="td-nome">{{ e.nome }}</td>
+        <td class="td-cpf">{{ e.cpf | doc }}</td>
+        <td class="td-ddd">{{ e.ddd or '' }}</td>
+        <td class="td-tel">{{ e.telefone | tel }}</td>
+        <td class="td-veiculo">{{ e.veiculo or '' }}</td>
+        <td class="td-cracha">{% if e.cracha_tipo and e.cracha_numero %}{{ e.cracha_tipo }}-{{ e.cracha_numero }}{% endif %}</td>
+        <td class="td-secao">{{ e.secao or '' }}</td>
+        <td class="td-part"><span class="x-marca">{% if e.motivo == 'Particular' %}X{% endif %}</span></td>
+        <td class="td-sv"><span class="x-marca">{% if e.motivo == 'Serviço' %}X{% endif %}</span></td>
+        <td class="td-obs">{{ e.observacao or '' }}</td>
+        <td class="td-hora">
+            {{ e.horario_entrada or '' }}
+            {% if e.data_entrada and e.data_entrada != servico.data_inicio %}<br><span style="font-size:7pt;">{{ e.data_entrada.split('-')[2] }}/{{ e.data_entrada.split('-')[1] }}</span>{% endif %}
+        </td>
+        <td class="td-hora">
+            {{ e.horario_saida or '' }}
+            {% if e.data_saida and e.data_saida != servico.data_inicio %}<br><span style="font-size:7pt;">{{ e.data_saida.split('-')[2] }}/{{ e.data_saida.split('-')[1] }}</span>{% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+    {% for i in range(linhas_por_pagina - bloco|length) %}
+    <tr>
+        <td></td><td></td><td></td><td></td><td></td>
+        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% if p == paginas - 1 %}
+<div class="rodape">
+    <div class="rodape-local">Quartel em Garanhuns, _____ de _______________ de 202__.</div>
+    <div class="rodape-ass">
+        <div class="assinatura">
+            <div class="linha-ass"></div>
+            <div class="nome-grad">NOME COMPLETO - GRAD</div>
+            <div class="cargo">Cmt da Guarda</div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+</div>
+{% endfor %}
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+{% block titulo %}Usuários{% endblock %}
+{% block content %}
+<div class="container" style="max-width:520px;">
+    <div class="page-header">
+        <div><div class="page-title">Usuários</div><div class="page-sub">Todos têm o mesmo nível de acesso</div></div>
+    </div>
+
+    {% if erro %}
+    <div style="background:rgba(139,42,42,0.25);border:1px solid var(--vermelho);color:#e8a;padding:0.6rem 0.9rem;border-radius:4px;font-size:0.85rem;margin-bottom:1rem;">{{ erro }}</div>
+    {% endif %}
+
+    <div class="card">
+        <div class="card-title">Novo Usuário</div>
+        <form method="POST">
+            <div class="form-grid">
+                <div class="form-group">
+                    <label>Usuário</label>
+                    <input type="text" name="username" placeholder="ex: joao.silva" required>
+                </div>
+                <div class="form-group">
+                    <label>Senha (mín. 6 caracteres)</label>
+                    <input type="password" name="senha" required minlength="6">
+                </div>
+            </div>
+            <div style="display:flex;justify-content:flex-end;margin-top:1rem;">
+                <button type="submit" class="btn btn-primary">+ Criar</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;">
+        <div class="card-title" style="padding:1.5rem 1.5rem 0;">Usuários Cadastrados</div>
+        <table>
+            <thead><tr><th>Usuário</th><th>Criado em</th></tr></thead>
+            <tbody>
+            {% for u in usuarios %}
+            <tr><td><strong>{{ u.username }}</strong></td><td class="mono" style="color:var(--cinza-texto);font-size:0.78rem;">{{ u.criado_em }}</td></tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

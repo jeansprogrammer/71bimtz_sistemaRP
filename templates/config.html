@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block titulo %}Configurações{% endblock %}
+{% block content %}
+<div class="container" style="max-width:500px;">
+    <div class="page-header">
+        <div><div class="page-title">Configurações</div><div class="page-sub">Parâmetros fixos do sistema</div></div>
+    </div>
+    <div class="card">
+        <div class="card-title">Assinatura — CMT da Guarda</div>
+        <form method="POST" action="/config">
+            <div class="form-group" style="margin-bottom:1.25rem;">
+                <label>Nome Completo e Graduação</label>
+                <input type="text" name="cmt_guarda_nome" value="{{ cmt_guarda_nome }}" placeholder="Ex: Cb JOÃO DA SILVA">
+                <span style="font-size:0.72rem;color:var(--cinza-texto);margin-top:0.3rem;">Será exibido na linha de assinatura do rodapé da relação impressa.</span>
+            </div>
+            <div style="display:flex;justify-content:flex-end;">
+                <button type="submit" class="btn btn-primary">💾 Salvar</button>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

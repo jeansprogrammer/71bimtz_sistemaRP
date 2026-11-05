@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block titulo %}Novo Cadastro{% endblock %}
+{% block content %}
+<div class="container" style="max-width:600px;">
+    <div class="page-header">
+        <div><div class="page-title">Novo Cadastro</div><div class="page-sub">Registrar nova pessoa no sistema</div></div>
+        <a href="/pessoas" class="btn btn-secondary" style="margin-left:auto;">← Voltar</a>
+    </div>
+    <div class="card">
+        <div class="card-title">Identificação</div>
+        <div class="form-grid">
+            <div class="form-group" style="grid-column:1/-1;">
+                <label>Nome Completo *</label>
+                <input type="text" id="nome" placeholder="Nome completo" autofocus>
+            </div>
+            <div class="form-group" style="grid-column:1/-1;">
+                <label>CPF ou Doc. de Identificação (Org Exp) *</label>
+                <input type="text" id="cpf" placeholder="000.000.000-00 ou nº do documento">
+            </div>
+        </div>
+
+        <div class="card-title" style="margin-top:1.25rem;">Telefone de Contato</div>
+        <div class="form-grid" style="grid-template-columns:90px 1fr;">
+            <div class="form-group">
+                <label>DDD</label>
+                <input type="text" id="ddd" placeholder="81" maxlength="3">
+            </div>
+            <div class="form-group">
+                <label>Número</label>
+                <input type="text" id="telefone" placeholder="99999-9999">
+            </div>
+        </div>
+
+        <div class="card-title" style="margin-top:1.25rem;">Veículo (se tiver)</div>
+        <div class="form-grid" style="grid-template-columns:1fr 1fr;">
+            <div class="form-group">
+                <label>Placa</label>
+                <input type="text" id="placa" placeholder="Ex: RSI4G23" style="text-transform:uppercase;" maxlength="8">
+            </div>
+            <div class="form-group">
+                <label>Modelo</label>
+                <input type="text" id="modelo" placeholder="Ex: Corsa, CG 160">
+            </div>
+        </div>
+
+        <div class="card-title" style="margin-top:1.25rem;">Observações</div>
+        <div class="form-group">
+            <textarea id="observacao" placeholder="Informações adicionais..."></textarea>
+        </div>
+
+        <div style="display:flex;gap:0.5rem;justify-content:flex-end;margin-top:1.5rem;">
+            <a href="/pessoas" class="btn btn-secondary">Cancelar</a>
+            <button class="btn btn-primary" onclick="salvar()">✅ Cadastrar</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+{% block scripts %}
+<script>
+document.getElementById('cpf').addEventListener('input', function(){
+    let v=this.value.replace(/\D/g,'');
+    if(this.value.replace(/[\d.\-]/g,'').length===0 && v.length<=11){
+        v=v.replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d)/,'$1.$2').replace(/(\d{3})(\d{1,2})$/,'$1-$2');
+        this.value=v;
+    }
+});
+document.getElementById('placa').addEventListener('input', function(){ this.value = this.value.toUpperCase(); });
+async function salvar(){
+    const nome=document.getElementById('nome').value.trim();
+    const cpf=document.getElementById('cpf').value.trim();
+    if(!nome||!cpf){toast('Nome e CPF/Doc são obrigatórios',true);return;}
+    const placa=document.getElementById('placa').value.trim();
+    const modelo=document.getElementById('modelo').value.trim();
+    const veiculo = placa && modelo ? `${placa} - ${modelo}` : placa || modelo;
+    const r=await api('/api/salvar_pessoa',{
+        nome, cpf,
+        ddd: document.getElementById('ddd').value.trim(),
+        telefone: document.getElementById('telefone').value.trim(),
+        veiculo,
+        observacao: document.getElementById('observacao').value.trim(),
+    });
+    if(r.ok){toast('Cadastrado!');setTimeout(()=>window.location.href='/pessoas',700);}
+    else toast(r.erro||'Erro',true);
+}
+</script>
+{% endblock %}

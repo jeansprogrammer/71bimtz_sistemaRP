@@ -1,0 +1,338 @@
+{% extends "base.html" %}
+{% block titulo %}Relação do Dia{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="page-header">
+        <div>
+            <div class="page-title">Relação de Serviço</div>
+            <div class="page-sub">
+                Iniciado em {{ servico.data_inicio.split('-')|reverse|join('/') }} — 71º Batalhão de Infantaria Motorizado
+                <span class="badge badge-amarelo" style="margin-left:0.5rem;">EM ANDAMENTO</span>
+            </div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:0.5rem;align-items:center;">
+            <span style="color:var(--cinza-texto);font-size:0.78rem;">{{ entradas|length }} entrada(s)</span>
+            <a href="/imprimir/{{ servico.id }}" target="_blank" class="btn btn-secondary">🖨️ Imprimir</a>
+            <button onclick="abrirModal()" class="btn btn-primary">+ Adicionar Entrada</button>
+            <button onclick="confirmarFecharServico()" class="btn btn-danger">🔒 Fechar Serviço</button>
+        </div>
+    </div>
+
+    <div class="card" style="padding:0;overflow:hidden;">
+        {% if entradas %}
+        <div style="overflow-x:auto;">
+        <table>
+            <thead><tr>
+                <th>Nome</th>
+                <th>CPF / Doc</th>
+                <th>Tel</th>
+                <th>Veículo</th>
+                <th>Crachá</th>
+                <th>Seção</th>
+                <th>Motivo</th>
+                <th>Obs</th>
+                <th>Entrada</th>
+                <th>Saída</th>
+                <th></th>
+            </tr></thead>
+            <tbody>
+            {% for e in entradas %}
+            <tr id="row-{{ e.id }}">
+                <td data-label="Nome"><strong>{{ e.nome }}</strong></td>
+                <td data-label="CPF/Doc" class="mono" style="font-size:0.78rem;">{{ e.cpf | doc }}</td>
+                <td data-label="Tel" class="mono" style="font-size:0.78rem;color:var(--cinza-texto);">
+                    {% if e.ddd and e.telefone %}({{ e.ddd }}) {{ e.telefone | tel }}{% else %}—{% endif %}
+                </td>
+                <td data-label="Veículo" style="font-size:0.78rem;color:var(--cinza-texto);">{{ e.veiculo or '—' }}</td>
+                <td data-label="Crachá">
+                    {% if e.cracha_tipo and e.cracha_numero %}
+                    <span class="badge badge-amarelo">{{ e.cracha_tipo }}-{{ e.cracha_numero }}</span>
+                    {% else %}—{% endif %}
+                </td>
+                <td data-label="Seção"><span class="badge badge-verde" style="font-size:0.66rem;">{{ e.secao or '—' }}</span></td>
+                <td data-label="Motivo">
+                    {% if e.motivo == 'Particular' %}<span class="badge badge-cinza">PART.</span>
+                    {% elif e.motivo == 'Serviço' %}<span class="badge badge-azul">SV</span>
+                    {% else %}—{% endif %}
+                </td>
+                <td data-label="Obs" style="font-size:0.78rem;color:var(--cinza-texto);max-width:100px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ e.observacao or '—' }}</td>
+                <td data-label="Entrada" class="mono" style="font-size:0.8rem;">
+                    {{ e.horario_entrada or '—' }}
+                    {% if e.data_entrada %}<br><span style="font-size:0.65rem;color:var(--cinza-texto);">{{ e.data_entrada.split('-')[2] }}/{{ e.data_entrada.split('-')[1] }}</span>{% endif %}
+                </td>
+                <td data-label="Saída" class="mono" id="saida-{{ e.id }}">
+                    {% if e.horario_saida %}
+                        <span class="badge badge-cinza">{{ e.horario_saida }}</span>
+                        {% if e.data_saida %}<br><span style="font-size:0.65rem;color:var(--cinza-texto);">{{ e.data_saida.split('-')[2] }}/{{ e.data_saida.split('-')[1] }}</span>{% endif %}
+                    {% else %}
+                        <button class="btn btn-sm btn-verde" data-id="{{ e.id }}" onclick="registrarSaida(this.dataset.id)">↩ Saída</button>
+                    {% endif %}
+                </td>
+                <td data-actions style="white-space:nowrap;">
+                    <button class="btn btn-sm btn-secondary"
+                        data-id="{{ e.id }}"
+                        data-cracha-tipo="{{ e.cracha_tipo or '' }}"
+                        data-cracha-numero="{{ e.cracha_numero or '' }}"
+                        data-secao="{{ e.secao or '' }}"
+                        data-motivo="{{ e.motivo or '' }}"
+                        data-entrada="{{ e.horario_entrada or '' }}"
+                        data-saida="{{ e.horario_saida or '' }}"
+                        data-obs="{{ e.observacao or '' | e }}"
+                        onclick="abrirEditBtn(this)">✏️</button>
+                    <button class="btn btn-sm btn-danger" data-id="{{ e.id }}" onclick="remover(this.dataset.id)">✕</button>
+                </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+        {% else %}
+        <div style="text-align:center;padding:3rem;color:var(--cinza-texto);">
+            <div style="font-size:2.5rem;margin-bottom:0.5rem;">📋</div>
+            <div>Nenhuma entrada registrada hoje.</div>
+            <div style="font-size:0.78rem;margin-top:0.3rem;">Clique em <strong style="color:var(--amarelo)">+ Adicionar Entrada</strong> para começar.</div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- MODAL ADICIONAR -->
+<div class="modal-overlay" id="modalOverlay">
+<div class="modal">
+    <button class="modal-close" onclick="fecharModal()">✕</button>
+    <div class="modal-title">Nova Entrada</div>
+
+    <div class="form-group" style="margin-bottom:0.75rem;">
+        <label>Buscar Pessoa (Nome ou CPF)</label>
+        <input type="text" id="buscaInput" placeholder="Digite o nome ou CPF..." autocomplete="off">
+        <div id="buscaResultados" style="background:#0a0f08;border:1px solid var(--cinza-borda);border-radius:4px;max-height:160px;overflow-y:auto;display:none;"></div>
+        <div id="pessoaSelecionada" style="display:none;margin-top:0.4rem;padding:0.6rem;background:rgba(45,90,27,0.2);border:1px solid var(--verde-claro);border-radius:4px;font-size:0.82rem;"></div>
+    </div>
+
+    <span class="sep">Dados do dia</span>
+    <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="form-group">
+            <label>Tipo Crachá</label>
+            <select id="mCrachaTipo">
+                <option value="">— Selecione —</option>
+                {% for sigla, nome in cracha_tipos %}
+                <option value="{{ sigla }}">{{ sigla }} — {{ nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Nº Crachá</label>
+            <select id="mCrachaNum">
+                <option value="">—</option>
+                {% for n in range(1,51) %}<option value="{{ '%02d'|format(n) }}">{{ '%02d'|format(n) }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Motivo</label>
+            <select id="mMotivo">
+                <option value="">— Selecione —</option>
+                <option value="Particular">Particular</option>
+                <option value="Serviço">Serviço (SV)</option>
+            </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+            <label>Seção</label>
+            <select id="mSecao">
+                <option value="">— Selecione —</option>
+                {% for s in secoes %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Horário Entrada</label>
+            <input type="time" id="mEntrada">
+        </div>
+        <div class="form-group">
+            <label>Horário Saída</label>
+            <input type="time" id="mSaida">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+            <label>Observação</label>
+            <input type="text" id="mObs" placeholder="Ex: Entregar Material">
+        </div>
+    </div>
+
+    <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="confirmarAdicao()">✅ Adicionar</button>
+    </div>
+</div>
+</div>
+
+<!-- MODAL EDITAR -->
+<div class="modal-overlay" id="editOverlay">
+<div class="modal">
+    <button class="modal-close" onclick="fecharEdit()">✕</button>
+    <div class="modal-title">Editar Registro</div>
+    <input type="hidden" id="eId">
+    <div class="form-grid" style="grid-template-columns:1fr 1fr 1fr;">
+        <div class="form-group">
+            <label>Tipo Crachá</label>
+            <select id="eCrachaTipo">
+                <option value="">— Selecione —</option>
+                {% for sigla, nome in cracha_tipos %}
+                <option value="{{ sigla }}">{{ sigla }} — {{ nome }}</option>
+                {% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Nº Crachá</label>
+            <select id="eCrachaNum">
+                <option value="">—</option>
+                {% for n in range(1,51) %}<option value="{{ '%02d'|format(n) }}">{{ '%02d'|format(n) }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Motivo</label>
+            <select id="eMotivo">
+                <option value="">—</option>
+                <option value="Particular">Particular</option>
+                <option value="Serviço">Serviço (SV)</option>
+            </select>
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+            <label>Seção</label>
+            <select id="eSecao">
+                <option value="">— Selecione —</option>
+                {% for s in secoes %}<option value="{{ s }}">{{ s }}</option>{% endfor %}
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Horário Entrada</label>
+            <input type="time" id="eEntrada">
+        </div>
+        <div class="form-group">
+            <label>Horário Saída</label>
+            <input type="time" id="eSaida">
+        </div>
+        <div class="form-group" style="grid-column:1/-1;">
+            <label>Observação</label>
+            <input type="text" id="eObs">
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="fecharEdit()">Cancelar</button>
+        <button class="btn btn-primary" onclick="salvarEdit()">Salvar</button>
+    </div>
+</div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+let pessoaId=null, buscaTimer=null;
+const agora=new Date();
+document.getElementById('mEntrada').value=String(agora.getHours()).padStart(2,'0')+':'+String(agora.getMinutes()).padStart(2,'0');
+
+function abrirModal(){document.getElementById('modalOverlay').classList.add('open');setTimeout(()=>document.getElementById('buscaInput').focus(),100);}
+function fecharModal(){
+    document.getElementById('modalOverlay').classList.remove('open');
+    pessoaId=null;
+    document.getElementById('buscaInput').value='';
+    document.getElementById('buscaResultados').style.display='none';
+    document.getElementById('pessoaSelecionada').style.display='none';
+}
+
+document.getElementById('buscaInput').addEventListener('input',function(){
+    clearTimeout(buscaTimer);
+    buscaTimer=setTimeout(()=>buscar(this.value),280);
+});
+
+async function buscar(q){
+    const res=document.getElementById('buscaResultados');
+    if(q.length<2){res.style.display='none';return;}
+    const data=await api('/api/buscar_pessoa?q='+encodeURIComponent(q));
+    if(!data.length){
+        res.innerHTML='<div style="padding:0.75rem;color:var(--cinza-texto);font-size:0.82rem;">Não encontrado. <a href="/cadastro" style="color:var(--amarelo)">Cadastrar?</a></div>';
+        res.style.display='block';return;
+    }
+    res.innerHTML=data.map(p=>`
+        <div onclick="selecionar(${p.id},'${p.nome}','${p.cpf}')"
+             style="padding:0.65rem 1rem;cursor:pointer;border-bottom:1px solid var(--cinza-borda);font-size:0.82rem;"
+             onmouseover="this.style.background='rgba(200,168,60,0.1)'" onmouseout="this.style.background=''">
+            <strong>${p.nome}</strong>
+            <span style="color:var(--cinza-texto);font-family:monospace;margin-left:0.5rem;font-size:0.78rem;">${p.cpf}</span>
+            ${p.veiculo?`<span style="color:var(--cinza-texto);font-size:0.73rem;margin-left:0.4rem;">🚗 ${p.veiculo}</span>`:''}
+        </div>`).join('');
+    res.style.display='block';
+}
+
+function selecionar(id,nome,cpf){
+    pessoaId=id;
+    document.getElementById('buscaInput').value=nome;
+    document.getElementById('buscaResultados').style.display='none';
+    document.getElementById('pessoaSelecionada').innerHTML=`✅ <strong>${nome}</strong> — <span class="mono">${cpf}</span>`;
+    document.getElementById('pessoaSelecionada').style.display='block';
+}
+
+async function confirmarAdicao(){
+    if(!pessoaId){toast('Selecione uma pessoa primeiro',true);return;}
+    const r=await api('/api/adicionar_relacao',{
+        pessoa_id:pessoaId,
+        cracha_tipo:document.getElementById('mCrachaTipo').value,
+        cracha_numero:document.getElementById('mCrachaNum').value,
+        secao:document.getElementById('mSecao').value,
+        motivo:document.getElementById('mMotivo').value,
+        observacao:document.getElementById('mObs').value,
+        horario_entrada:document.getElementById('mEntrada').value,
+        horario_saida:document.getElementById('mSaida').value,
+    });
+    if(r.ok){toast('Entrada registrada!');setTimeout(()=>location.reload(),600);}
+    else toast(r.erro||'Erro',true);
+}
+
+async function remover(id){
+    if(!confirm('Remover este registro?'))return;
+    const r=await api('/api/remover_relacao',{id});
+    if(r.ok){document.getElementById('row-'+id).remove();toast('Removido.');}
+}
+
+async function registrarSaida(id){
+    const h=new Date(),hh=String(h.getHours()).padStart(2,'0')+':'+String(h.getMinutes()).padStart(2,'0');
+    const r=await api('/api/registrar_saida',{id,horario_saida:hh});
+    if(r.ok){toast('Saída: '+hh);setTimeout(()=>location.reload(),500);}
+}
+
+async function confirmarFecharServico(){
+    if(!confirm('Fechar este serviço?\n\nUma nova relação em branco será iniciada.\nCertifique-se de já ter impresso a relação atual antes de continuar.'))return;
+    const r=await api('/api/fechar_servico',{});
+    if(r.ok){toast('Serviço fechado! Iniciando novo...');setTimeout(()=>location.reload(),700);}
+    else toast('Erro ao fechar serviço',true);
+}
+
+function abrirEditBtn(btn){
+    document.getElementById('eId').value=btn.dataset.id;
+    document.getElementById('eCrachaTipo').value=btn.dataset.crachaTipo||'';
+    document.getElementById('eCrachaNum').value=btn.dataset.crachaNumero||'';
+    document.getElementById('eSecao').value=btn.dataset.secao||'';
+    document.getElementById('eMotivo').value=btn.dataset.motivo||'';
+    document.getElementById('eEntrada').value=btn.dataset.entrada||'';
+    document.getElementById('eSaida').value=btn.dataset.saida||'';
+    document.getElementById('eObs').value=btn.dataset.obs||'';
+    document.getElementById('editOverlay').classList.add('open');
+}
+function fecharEdit(){document.getElementById('editOverlay').classList.remove('open');}
+
+async function salvarEdit(){
+    const r=await api('/api/atualizar_relacao',{
+        id:parseInt(document.getElementById('eId').value),
+        cracha_tipo:document.getElementById('eCrachaTipo').value,
+        cracha_numero:document.getElementById('eCrachaNum').value,
+        secao:document.getElementById('eSecao').value,
+        motivo:document.getElementById('eMotivo').value,
+        observacao:document.getElementById('eObs').value,
+        horario_entrada:document.getElementById('eEntrada').value,
+        horario_saida:document.getElementById('eSaida').value,
+    });
+    if(r.ok){toast('Atualizado!');fecharEdit();setTimeout(()=>location.reload(),600);}
+    else toast('Erro',true);
+}
+
+document.getElementById('modalOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('modalOverlay'))fecharModal();});
+document.getElementById('editOverlay').addEventListener('click',e=>{if(e.target===document.getElementById('editOverlay'))fecharEdit();});
+</script>
+{% endblock %}

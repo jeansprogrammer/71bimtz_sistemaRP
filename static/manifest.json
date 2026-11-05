@@ -1,0 +1,14 @@
+{
+  "name": "71 BI Mtz — Controle de Acesso",
+  "short_name": "71 BI Mtz",
+  "description": "Sistema de controle de acesso de civis — 71º Batalhão de Infantaria Motorizado",
+  "start_url": "/relacao",
+  "display": "standalone",
+  "background_color": "#0f1410",
+  "theme_color": "#1a3510",
+  "orientation": "any",
+  "icons": [
+    { "src": "/static/logo_71bi.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/static/logo_71bi.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+  ]
+}
