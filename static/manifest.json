@@ -8,7 +8,7 @@
   "theme_color": "#1a3510",
   "orientation": "any",
   "icons": [
-    { "src": "/static/logo_71bi.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
-    { "src": "/static/logo_71bi.png", "sizes": "512x512", "type": "image/png", "purpose": "any" }
+    { "src": "/static/simbolo.ico", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "/static/simbolo.ico", "sizes": "512x512", "type": "image/png", "purpose": "any" }
   ]
 }
