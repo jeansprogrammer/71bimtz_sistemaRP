@@ -61,7 +61,7 @@ def excluir_usuario(username):
             conn.close()
             return False, "Não é possível excluir o único usuário do sistema"
 
-        conn.execute("DELETE FROM usuarios WHERE username = ?", (username.strip().lower(),))
+        conn.execute("DELETE FROM usuarios WHERE LOWER(username) = LOWER(?)", (username.strip(),))
         conn.commit()
         conn.close()
         return True, None
