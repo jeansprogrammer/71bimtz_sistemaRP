@@ -1,56 +1,65 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
+<head><script src="https://myhub.ia.br/canvas-vendor/tailwind.js"></script>
 <meta charset="UTF-8">
+<meta name="format-detection" content="telephone=no, email=no, address=no">
 <title>Relação de Civis — {{ dia }}/{{ mes }}/20{{ ano }} — 71 BI Mtz</title>
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
-body{font-family:'Times New Roman',Times,serif;font-size:10pt;color:#000;background:#fff;padding:16px;}
+
+/* TELA (fora da impressão): fundo cinza + folha branca centralizada */
+body{
+    font-family:'Times New Roman',Times,serif;font-size:10pt;color:#000;
+    background:#e9eae5;
+    padding:24px 0 48px;
+}
+.folha{
+    background:#fff;
+    max-width:1050px;
+    margin:0 auto;
+    padding:22px 26px;
+    box-shadow:0 2px 14px rgba(0,0,0,0.25);
+    border-radius:2px;
+}
+
+/* BARRA DE AÇÕES (tela) */
+.barra-acoes{
+    max-width:1050px;margin:0 auto 16px;display:flex;justify-content:center;gap:12px;
+}
+.btn-imprimir{padding:9px 24px;background:#2d5a1b;color:#fff;border:none;border-radius:4px;
+    font-size:11pt;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;}
+.btn-imprimir:hover{background:#3d7a25;}
+.btn-pdf{padding:9px 24px;background:#c8a83c;color:#1a3510;border:none;border-radius:4px;
+    font-size:11pt;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;}
+.btn-pdf:hover{background:#e8c84c;}
 
 /* CABEÇALHO */
-.cabecalho{
-    display:grid;
-    grid-template-columns:90px 1fr 115px;
-    align-items:start;
-    margin-bottom:8px;
-}
-/* Esquerda: VISTO centralizado sobre "Oficial de Dia" */
+.cabecalho{display:grid;grid-template-columns:90px 1fr 115px;align-items:start;margin-bottom:8px;}
 .cab-esq{display:flex;flex-direction:column;align-items:center;}
 .cab-esq .visto-label{font-size:10pt;text-transform:uppercase;margin-bottom:0;}
 .cab-esq .ass-linha{border-top:1px solid #000;margin-top:30px;padding-top:2px;
-    font-size:10pt;text-transform:uppercase;display:inline-block;
-    min-width:80px;text-align:center;}
-
-/* Centro */
+    font-size:10pt;text-transform:uppercase;display:inline-block;min-width:80px;text-align:center;}
 .cab-centro{text-align:center;}
 .cab-centro img{height:60px;width:auto;display:block;margin:0 auto 4px;}
 .cab-centro .cab-texto{font-size:10pt;font-weight:bold;text-transform:uppercase;line-height:1.4;}
-
-/* Direita: VISTO centralizado sobre "Adjunto ao Oficial de Dia" + DOC NR abaixo */
 .cab-dir{display:flex;flex-direction:column;align-items:center;}
 .cab-dir .visto-label{font-size:10pt;text-transform:uppercase;margin-bottom:0;}
 .cab-dir .ass-linha{border-top:1px solid #000;margin-top:30px;padding-top:2px;
-    font-size:10pt;text-transform:uppercase;display:inline-block;
-    min-width:90px;text-align:center;}
-.doc-nr{border:2px solid #000;padding:2px 8px;font-weight:bold;
-    font-size:10pt;display:inline-block;margin-top:6px;text-align:center;}
+    font-size:10pt;text-transform:uppercase;display:inline-block;min-width:90px;text-align:center;}
+.doc-nr{border:2px solid #000;padding:2px 8px;font-weight:bold;font-size:10pt;display:inline-block;margin-top:6px;text-align:center;}
 
 /* TÍTULO */
-.titulo-relacao{text-align:center;font-size:14pt;font-weight:bold;
-    text-transform:uppercase;margin:8px 0 4px;}
+.titulo-relacao{text-align:center;font-size:14pt;font-weight:bold;text-transform:uppercase;margin:8px 0 4px;}
 .servico-linha{text-align:center;font-size:12pt;margin-bottom:8px;}
 .servico-linha span{border-bottom:1px solid #000;display:inline-block;}
 
-/* TABELA */
+/* TABELA — telefone/qualquer texto nunca herda estilo de link */
 table{width:100%;border-collapse:collapse;font-size:10pt;}
-th{
-    background:#e8e8e8;color:#000;
-    padding:3px 3px;text-align:center;
-    font-size:10pt;font-weight:bold;text-transform:uppercase;
-    border:1px solid #000;line-height:1.2;
-}
-td{padding:2px 3px;border:1px solid #000;vertical-align:middle;
-    font-size:10pt;height:15px;font-weight:normal;text-transform:uppercase;}
+th{background:#e8e8e8;color:#000;padding:3px 3px;text-align:center;font-size:10pt;font-weight:bold;
+    text-transform:uppercase;border:1px solid #000;line-height:1.2;}
+td{padding:2px 3px;border:1px solid #000;vertical-align:middle;font-size:10pt;height:15px;
+    font-weight:normal;text-transform:uppercase;color:#000 !important;}
+td, td *{color:#000 !important;text-decoration:none !important;}
 .td-nome{min-width:135px;}
 .td-cpf{text-align:center;width:90px;}
 .td-ddd{text-align:center;width:28px;}
@@ -73,25 +82,26 @@ td{padding:2px 3px;border:1px solid #000;vertical-align:middle;
 .assinatura .nome-grad{font-size:12pt;font-weight:bold;text-transform:uppercase;}
 .assinatura .cargo{font-size:12pt;text-transform:uppercase;}
 
-/* CONTINUAÇÃO */
-.cabecalho-continuacao{font-size:9pt;text-align:right;
-    padding-bottom:4px;border-bottom:1px solid #555;margin-bottom:6px;color:#555;}
+.cabecalho-continuacao{font-size:9pt;text-align:right;padding-bottom:4px;border-bottom:1px solid #555;
+    margin-bottom:6px;color:#555;}
 
 @media print{
-    body{padding:8px;}
+    body{background:#fff;padding:0;}
+    .folha{box-shadow:none;border-radius:0;max-width:none;padding:8px;}
     .no-print{display:none!important;}
     @page{margin:1.8cm;size:A4 landscape;}
     .quebra{page-break-before:always;}
 }
-.btn-imprimir{display:block;margin:0 auto 16px;padding:9px 26px;
-    background:#2d5a1b;color:#fff;border:none;border-radius:4px;
-    font-size:11pt;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;}
-.btn-imprimir:hover{background:#3d7a25;}
 </style>
 </head>
 <body>
 
-<button class="btn-imprimir no-print" onclick="window.print()">🖨️ IMPRIMIR RELAÇÃO</button>
+<div class="barra-acoes no-print">
+    <button class="btn-imprimir" onclick="window.print()">🖨️ IMPRIMIR RELAÇÃO</button>
+    <button class="btn-pdf" onclick="window.print()">📄 SALVAR COMO PDF</button>
+</div>
+
+<div class="folha">
 
 {% set linhas_por_pagina = 20 %}
 {% set total = entradas|length %}
@@ -207,6 +217,8 @@ td{padding:2px 3px;border:1px solid #000;vertical-align:middle;
 
 </div>
 {% endfor %}
+
+</div>
 
 </body>
 </html>

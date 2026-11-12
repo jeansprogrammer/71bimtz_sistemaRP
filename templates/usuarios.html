@@ -32,13 +32,35 @@
     <div class="card" style="padding:0;overflow:hidden;">
         <div class="card-title" style="padding:1.5rem 1.5rem 0;">Usuários Cadastrados</div>
         <table>
-            <thead><tr><th>Usuário</th><th>Criado em</th></tr></thead>
+            <thead><tr><th>Usuário</th><th>Criado em</th><th style="width:60px;"></th></tr></thead>
             <tbody>
             {% for u in usuarios %}
-            <tr><td><strong>{{ u.username }}</strong></td><td class="mono" style="color:var(--cinza-texto);font-size:0.78rem;">{{ u.criado_em }}</td></tr>
+            <tr>
+                <td><strong>{{ u.username }}</strong></td>
+                <td class="mono" style="color:var(--cinza-texto);font-size:0.78rem;">{{ u.criado_em }}</td>
+                <td style="text-align:center;">
+                    {% if u.username != session.username %}
+                    <button type="button" class="btn btn-danger" style="padding:0.3rem 0.6rem;font-size:0.8rem;"
+                        onclick="excluirUsuario('{{ u.username }}')">🗑️</button>
+                    {% endif %}
+                </td>
+            </tr>
             {% endfor %}
             </tbody>
         </table>
     </div>
 </div>
+
+<script>
+function excluirUsuario(username){
+    if(!confirm('Excluir o usuário "' + username + '"? Essa ação não pode ser desfeita.')) return;
+    fetch('/usuarios/excluir/' + encodeURIComponent(username), { method: 'POST' })
+        .then(r => r.json())
+        .then(d => {
+            if(d.ok){ location.reload(); }
+            else { toast(d.erro || 'Erro ao excluir', true); }
+        })
+        .catch(() => toast('Erro de conexão', true));
+}
+</script>
 {% endblock %}

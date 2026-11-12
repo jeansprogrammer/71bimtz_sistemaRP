@@ -50,3 +50,21 @@ def login_required(view_func):
             return redirect(url_for('login', next=request.path))
         return view_func(*args, **kwargs)
     return wrapper
+
+def excluir_usuario(username):
+    """Remove um usuário pelo username. Impede excluir o último usuário restante."""
+    conn = get_db()
+    try:
+        total = conn.execute("SELECT COUNT(*) AS c FROM usuarios").fetchone()
+        total = total['c'] if hasattr(total, 'keys') else total[0]
+        if total <= 1:
+            conn.close()
+            return False, "Não é possível excluir o único usuário do sistema"
+
+        conn.execute("DELETE FROM usuarios WHERE username = ?", (username.strip().lower(),))
+        conn.commit()
+        conn.close()
+        return True, None
+    except Exception as e:
+        conn.close()
+        return False, "Erro ao excluir usuário"

@@ -3,7 +3,7 @@ import sys
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
 
 from core.db import get_db, init_db, row_to_dict, USANDO_POSTGRES
-from core.auth import login_required, criar_usuario, verificar_login, listar_usuarios
+from core.auth import login_required, criar_usuario, verificar_login, listar_usuarios, excluir_usuario
 from core.utils import (
     formatar_documento, formatar_telefone, formatar_data_extenso,
     hoje_recife, hora_recife, SECOES, CRACHA_TIPOS,
@@ -65,6 +65,13 @@ def usuarios():
             erro = msg
     return render_template('usuarios.html', usuarios=listar_usuarios(), erro=erro)
 
+@app.route('/usuarios/excluir/<username>', methods=['POST'])
+@login_required
+def usuarios_excluir(username):
+    if username.strip().lower() == session.get('username'):
+        return jsonify({'ok': False, 'erro': 'Você não pode excluir seu próprio usuário'})
+    ok, msg = excluir_usuario(username)
+    return jsonify({'ok': ok, 'erro': None if ok else msg})
 
 # ── ROTAS ─────────────────────────────────────────────────────────────────
 
