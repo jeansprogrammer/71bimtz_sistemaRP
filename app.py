@@ -1,6 +1,9 @@
 import os
 import sys
 from flask import Flask, render_template, request, jsonify, redirect, url_for, session
+from weasyprint import HTML
+from flask import send_file
+import io
 
 from core.db import get_db, init_db, row_to_dict, USANDO_POSTGRES
 from core.auth import login_required, criar_usuario, verificar_login, listar_usuarios, excluir_usuario
@@ -110,11 +113,7 @@ def pessoas():
     conn.close()
     return render_template('pessoas.html', pessoas=lista)
 
-
-@app.route('/imprimir')
-@app.route('/imprimir/<int:servico_id>')
-@login_required
-def imprimir(servico_id=None):
+def _montar_contexto_imprimir(servico_id=None):
     conn = get_db()
     if servico_id is None:
         servico = get_servico_aberto(conn)
@@ -130,8 +129,33 @@ def imprimir(servico_id=None):
     conn.close()
 
     info = formatar_data_extenso(servico['data_inicio'])
-    return render_template('imprimir.html', entradas=entradas, servico=servico, **info)
+    return dict(entradas=entradas, servico=servico, **info)
 
+@app.route('/imprimir')
+@app.route('/imprimir/<int:servico_id>')
+@login_required
+def imprimir(servico_id=None):
+    ctx = _montar_contexto_imprimir(servico_id)
+    return render_template('imprimir.html', **ctx)
+
+@app.route('/imprimir/pdf')
+@app.route('/imprimir/<int:servico_id>/pdf')
+@login_required
+def imprimir_pdf(servico_id=None):
+    ctx = _montar_contexto_imprimir(servico_id)
+    html_renderizado = render_template('imprimir.html', **ctx)
+
+    pdf_bytes = HTML(string=html_renderizado, base_url=request.url_root).write_pdf()
+
+    dia = ctx['dia']
+    mes = ctx['mes']
+    ano = ctx['ano']
+    return send_file(
+        io.BytesIO(pdf_bytes),
+        mimetype='application/pdf',
+        as_attachment=True,
+        download_name=f'relacao_civis_{dia}-{mes}-20{ano}.pdf'
+    )
 
 @app.route('/config', methods=['GET', 'POST'])
 @login_required
