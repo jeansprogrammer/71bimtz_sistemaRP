@@ -98,7 +98,7 @@ td, td *{color:#000 !important;text-decoration:none !important;}
 
 <div class="barra-acoes no-print">
     <button class="btn-imprimir" onclick="window.print()">🖨️ IMPRIMIR RELAÇÃO</button>
-    <a class="btn-pdf" href="{% if servico %}/imprimir/{{ servico.id }}/pdf{% else %}/imprimir/pdf{% endif %}" style="text-decoration:none;display:inline-block;">📄 SALVAR COMO PDF</a>
+    <button class="btn-pdf" onclick="window.print()">📄 SALVAR COMO PDF</button>
 </div>
 
 <div class="folha">
