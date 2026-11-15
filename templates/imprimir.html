@@ -57,8 +57,8 @@ body{
 table{width:100%;border-collapse:collapse;font-size:10pt;table-layout:fixed;}
 th{background:#e8e8e8;color:#000;padding:3px 3px;text-align:center;font-size:10pt;font-weight:bold;
     text-transform:uppercase;border:1px solid #000;line-height:1.2;overflow:hidden;}
-td{padding:2px 3px;border:1px solid #000;vertical-align:middle;font-size:10pt;
-    height:15px;max-height:15px;
+td{padding:1px 3px;border:1px solid #000;vertical-align:middle;font-size:10pt;
+    height:11px;max-height:11px;
     font-weight:normal;text-transform:uppercase;color:#000 !important;
     overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
 td, td *{color:#000 !important;text-decoration:none !important;}
@@ -107,8 +107,8 @@ td, td *{color:#000 !important;text-decoration:none !important;}
 
 <div class="folha">
 
-{% set rows_pagina1 = 20 %}
-{% set rows_outras = 30 %}
+{% set rows_pagina1 = 15 %}
+{% set rows_outras = 25 %}
 {% set total = entradas|length %}
 {% if total <= rows_pagina1 %}
     {% set paginas = 1 %}
