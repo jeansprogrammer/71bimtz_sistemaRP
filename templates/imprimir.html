@@ -53,24 +53,26 @@ body{
 .servico-linha{text-align:center;font-size:12pt;margin-bottom:8px;}
 .servico-linha span{border-bottom:1px solid #000;display:inline-block;}
 
-/* TABELA — telefone/qualquer texto nunca herda estilo de link */
-table{width:100%;border-collapse:collapse;font-size:10pt;}
+/* TABELA — layout fixo: linha NUNCA cresce, mesmo com texto longo */
+table{width:100%;border-collapse:collapse;font-size:10pt;table-layout:fixed;}
 th{background:#e8e8e8;color:#000;padding:3px 3px;text-align:center;font-size:10pt;font-weight:bold;
-    text-transform:uppercase;border:1px solid #000;line-height:1.2;}
-td{padding:2px 3px;border:1px solid #000;vertical-align:middle;font-size:10pt;height:15px;
-    font-weight:normal;text-transform:uppercase;color:#000 !important;}
+    text-transform:uppercase;border:1px solid #000;line-height:1.2;overflow:hidden;}
+td{padding:2px 3px;border:1px solid #000;vertical-align:middle;font-size:10pt;
+    height:15px;max-height:15px;
+    font-weight:normal;text-transform:uppercase;color:#000 !important;
+    overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
 td, td *{color:#000 !important;text-decoration:none !important;}
-.td-nome{min-width:135px;}
-.td-cpf{text-align:center;width:90px;}
-.td-ddd{text-align:center;width:28px;}
-.td-tel{text-align:center;width:95px;white-space:nowrap;}
-.td-veiculo{width:110px;}
-.td-cracha{text-align:center;width:50px;}
-.td-secao{text-align:center;width:65px;}
-.td-part{text-align:center;width:28px;}
-.td-sv{text-align:center;width:24px;}
-.td-obs{width:45px;}
-.td-hora{text-align:center;width:38px;}
+.td-nome{width:17%;}
+.td-cpf{text-align:center;width:11%;}
+.td-ddd{text-align:center;width:3.5%;}
+.td-tel{text-align:center;width:9%;}
+.td-veiculo{width:12%;}
+.td-cracha{text-align:center;width:6%;}
+.td-secao{text-align:center;width:7%;}
+.td-part{text-align:center;width:3.5%;}
+.td-sv{text-align:center;width:3%;}
+.td-obs{width:14%;}
+.td-hora{text-align:center;width:4.5%;}
 .x-marca{font-weight:bold;font-size:11pt;}
 
 /* RODAPÉ */
@@ -91,6 +93,8 @@ td, td *{color:#000 !important;text-decoration:none !important;}
     .no-print{display:none!important;}
     @page{margin:1.8cm;size:A4 landscape;}
     .quebra{page-break-before:always;}
+    table{page-break-inside:auto;}
+    tr{page-break-inside:avoid;page-break-after:auto;}
 }
 </style>
 </head>
@@ -98,18 +102,30 @@ td, td *{color:#000 !important;text-decoration:none !important;}
 
 <div class="barra-acoes no-print">
     <button class="btn-imprimir" onclick="window.print()">🖨️ IMPRIMIR RELAÇÃO</button>
-    <button class="btn-pdf" onclick="window.print()">📄 SALVAR COMO PDF</button>
+    <a class="btn-pdf" href="{% if servico %}/imprimir/{{ servico.id }}/pdf{% else %}/imprimir/pdf{% endif %}" style="text-decoration:none;display:inline-block;">📄 SALVAR COMO PDF</a>
 </div>
 
 <div class="folha">
 
-{% set linhas_por_pagina = 20 %}
+{% set rows_pagina1 = 20 %}
+{% set rows_outras = 30 %}
 {% set total = entradas|length %}
-{% set paginas = [((total / linhas_por_pagina)|round(0,'ceil'))|int, 1]|max %}
+{% if total <= rows_pagina1 %}
+    {% set paginas = 1 %}
+{% else %}
+    {% set restante = total - rows_pagina1 %}
+    {% set paginas = 1 + ((restante / rows_outras)|round(0,'ceil'))|int %}
+{% endif %}
 
 {% for p in range(paginas) %}
-{% set ini = p * linhas_por_pagina %}
-{% set bloco = entradas[ini : ini + linhas_por_pagina] %}
+{% if p == 0 %}
+    {% set ini = 0 %}
+    {% set linhas_pagina_atual = rows_pagina1 %}
+{% else %}
+    {% set ini = rows_pagina1 + (p - 1) * rows_outras %}
+    {% set linhas_pagina_atual = rows_outras %}
+{% endif %}
+{% set bloco = entradas[ini : ini + linhas_pagina_atual] %}
 
 <div class="{% if p > 0 %}quebra{% endif %}">
 
@@ -173,30 +189,30 @@ td, td *{color:#000 !important;text-decoration:none !important;}
     <tbody>
     {% for e in bloco %}
     <tr>
-        <td class="td-nome">{{ e.nome }}</td>
+        <td class="td-nome" title="{{ e.nome }}">{{ e.nome }}</td>
         <td class="td-cpf">{{ e.cpf | doc }}</td>
         <td class="td-ddd">{{ e.ddd or '' }}</td>
         <td class="td-tel">{{ e.telefone | tel }}</td>
-        <td class="td-veiculo">{{ e.veiculo or '' }}</td>
+        <td class="td-veiculo" title="{{ e.veiculo or '' }}">{{ e.veiculo or '' }}</td>
         <td class="td-cracha">{% if e.cracha_tipo and e.cracha_numero %}{{ e.cracha_tipo }}-{{ e.cracha_numero }}{% endif %}</td>
         <td class="td-secao">{{ e.secao or '' }}</td>
         <td class="td-part"><span class="x-marca">{% if e.motivo == 'Particular' %}X{% endif %}</span></td>
         <td class="td-sv"><span class="x-marca">{% if e.motivo == 'Serviço' %}X{% endif %}</span></td>
-        <td class="td-obs">{{ e.observacao or '' }}</td>
+        <td class="td-obs" title="{{ e.observacao or '' }}">{{ e.observacao or '' }}</td>
         <td class="td-hora">
             {{ e.horario_entrada or '' }}
-            {% if e.data_entrada and e.data_entrada != servico.data_inicio %}<br><span style="font-size:7pt;">{{ e.data_entrada.split('-')[2] }}/{{ e.data_entrada.split('-')[1] }}</span>{% endif %}
+            {% if e.data_entrada and e.data_entrada != servico.data_inicio %}<span style="font-size:7pt;"> {{ e.data_entrada.split('-')[2] }}/{{ e.data_entrada.split('-')[1] }}</span>{% endif %}
         </td>
         <td class="td-hora">
             {{ e.horario_saida or '' }}
-            {% if e.data_saida and e.data_saida != servico.data_inicio %}<br><span style="font-size:7pt;">{{ e.data_saida.split('-')[2] }}/{{ e.data_saida.split('-')[1] }}</span>{% endif %}
+            {% if e.data_saida and e.data_saida != servico.data_inicio %}<span style="font-size:7pt;"> {{ e.data_saida.split('-')[2] }}/{{ e.data_saida.split('-')[1] }}</span>{% endif %}
         </td>
     </tr>
     {% endfor %}
-    {% for i in range(linhas_por_pagina - bloco|length) %}
+    {% for i in range(linhas_pagina_atual - bloco|length) %}
     <tr>
-        <td></td><td></td><td></td><td></td><td></td>
-        <td></td><td></td><td></td><td></td><td></td><td></td><td></td>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
     </tr>
     {% endfor %}
     </tbody>
