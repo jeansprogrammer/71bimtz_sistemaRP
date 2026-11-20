@@ -62,17 +62,17 @@ td{padding:1px 3px;border:1px solid #000;vertical-align:middle;font-size:10pt;
     font-weight:normal;text-transform:uppercase;color:#000 !important;
     overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
 td, td *{color:#000 !important;text-decoration:none !important;}
-.td-nome{width:17%;}
+.td-nome{width:24%;white-space:normal;word-break:break-word;}
 .td-cpf{text-align:center;width:11%;}
-.td-ddd{text-align:center;width:3.5%;}
+.td-ddd{text-align:center;width:2.5%;}
 .td-tel{text-align:center;width:9%;}
-
+    
 .td-cracha{text-align:center;width:6%;}
-.td-secao{text-align:center;width:7%;}
-.td-part{text-align:center;width:3.5%;}
-.td-sv{text-align:center;width:3%;}
+.td-secao{text-align:center;width:11%;white-space:normal;word-break:break-word;}
+.td-part{text-align:center;width:2.5%;}
+.td-sv{text-align:center;width:2%;}
 .td-obs{width:14%;}
-.td-hora{text-align:center;width:4.5%;}
+.td-hora{text-align:center;width:3.5%;}
 .x-marca{font-weight:bold;font-size:11pt;}
 
 /* RODAPÉ */
@@ -108,7 +108,7 @@ td, td *{color:#000 !important;text-decoration:none !important;}
 <div class="folha">
 
 {% set rows_pagina1 = 15 %}
-{% set rows_outras = 22 %}
+{% set rows_outras = 23 %}
 {% set total = entradas|length %}
 {% if total <= rows_pagina1 %}
     {% set paginas = 1 %}
@@ -159,7 +159,7 @@ td, td *{color:#000 !important;text-decoration:none !important;}
 </div>
 
 {% else %}
-<div class="cabecalho-continuacao no-print" style="margin-top:14px;">
+<div class="cabecalho-continuacao no-print" style="margin-top:28px;">
     71º BI Mtz — Relação de Civis — {{ dia }}/{{ mes }}/20{{ ano }} — (folha {{ p+1 }})
 </div>
 {% endif %}
@@ -199,14 +199,8 @@ td, td *{color:#000 !important;text-decoration:none !important;}
         <td class="td-part"><span class="x-marca">{% if e.motivo == 'Particular' %}X{% endif %}</span></td>
         <td class="td-sv"><span class="x-marca">{% if e.motivo == 'Serviço' %}X{% endif %}</span></td>
         <td class="td-obs" title="{{ e.observacao or '' }}">{{ e.observacao or '' }}</td>
-        <td class="td-hora">
-            {{ e.horario_entrada or '' }}
-            {% if e.data_entrada and e.data_entrada != servico.data_inicio %}<span style="font-size:7pt;"> {{ e.data_entrada.split('-')[2] }}/{{ e.data_entrada.split('-')[1] }}</span>{% endif %}
-        </td>
-        <td class="td-hora">
-            {{ e.horario_saida or '' }}
-            {% if e.data_saida and e.data_saida != servico.data_inicio %}<span style="font-size:7pt;"> {{ e.data_saida.split('-')[2] }}/{{ e.data_saida.split('-')[1] }}</span>{% endif %}
-        </td>
+        <td class="td-hora">{{ e.horario_entrada or '' }}</td>
+        <td class="td-hora">{{ e.horario_saida or '' }}</td>
     </tr>
     {% endfor %}
     {% for i in range(linhas_pagina_atual - bloco|length) %}
