@@ -14,7 +14,7 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-troque-em-producao")
 app.config.update(
     SESSION_COOKIE_HTTPONLY=True,
     SESSION_COOKIE_SAMESITE="Lax",
-    SESSION_COOKIE_SECURE=os.environ.get("VERCEL") == "1",  # https só em produção
+    SESSION_COOKIE_SECURE=os.environ.get("VERCEL") == "1",
 )
 
 init_db()
@@ -66,6 +66,15 @@ def usuarios():
     return render_template('usuarios.html', usuarios=listar_usuarios(), erro=erro)
 
 
+@app.route('/usuarios/excluir/<username>', methods=['POST'])
+@login_required
+def usuarios_excluir(username):
+    if username.strip().lower() == session.get('username'):
+        return jsonify({'ok': False, 'erro': 'Você não pode excluir seu próprio usuário'})
+    ok, msg = excluir_usuario(username)
+    return jsonify({'ok': ok, 'erro': None if ok else msg})
+
+
 # ── ROTAS ─────────────────────────────────────────────────────────────────
 
 @app.route('/')
@@ -80,7 +89,7 @@ def relacao():
     conn = get_db()
     servico = get_servico_aberto(conn)
     entradas = [row_to_dict(r) for r in conn.execute('''
-        SELECT r.*, p.nome, p.cpf, p.ddd, p.telefone, p.veiculo
+        SELECT r.*, p.nome, p.cpf, p.ddd, p.telefone
         FROM relacao_dia r JOIN pessoas p ON p.id = r.pessoa_id
         WHERE r.servico_id = ? ORDER BY r.id
     ''', (servico['id'],)).fetchall()]
@@ -104,10 +113,7 @@ def pessoas():
     return render_template('pessoas.html', pessoas=lista)
 
 
-@app.route('/imprimir')
-@app.route('/imprimir/<int:servico_id>')
-@login_required
-def imprimir(servico_id=None):
+def _montar_contexto_imprimir(servico_id=None):
     conn = get_db()
     if servico_id is None:
         servico = get_servico_aberto(conn)
@@ -116,20 +122,27 @@ def imprimir(servico_id=None):
         servico = row_to_dict(s) if s else get_servico_aberto(conn)
 
     entradas = [row_to_dict(r) for r in conn.execute('''
-        SELECT r.*, p.nome, p.cpf, p.ddd, p.telefone, p.veiculo
+        SELECT r.*, p.nome, p.cpf, p.ddd, p.telefone
         FROM relacao_dia r JOIN pessoas p ON p.id = r.pessoa_id
         WHERE r.servico_id = ? ORDER BY r.id
     ''', (servico['id'],)).fetchall()]
     conn.close()
 
     info = formatar_data_extenso(servico['data_inicio'])
-    return render_template('imprimir.html', entradas=entradas, servico=servico, **info)
+    return dict(entradas=entradas, servico=servico, **info)
+
+
+@app.route('/imprimir')
+@app.route('/imprimir/<int:servico_id>')
+@login_required
+def imprimir(servico_id=None):
+    ctx = _montar_contexto_imprimir(servico_id)
+    return render_template('imprimir.html', **ctx)
 
 
 @app.route('/config', methods=['GET', 'POST'])
 @login_required
 def config():
-    # Placeholder mantido do projeto original (assinatura Cmt da Guarda), se já existir no seu fluxo
     return render_template('config.html', cmt_guarda_nome='')
 
 
@@ -172,8 +185,8 @@ def salvar_pessoa():
     tel_formatado = formatar_telefone(d.get('telefone', ''))
     conn = get_db()
     try:
-        cur = conn.execute('INSERT INTO pessoas (nome,cpf,ddd,telefone,veiculo,observacao) VALUES (?,?,?,?,?,?)',
-            (d['nome'], cpf_formatado, d.get('ddd', ''), tel_formatado, d.get('veiculo', ''), d.get('observacao', '')))
+        conn.execute('INSERT INTO pessoas (nome,cpf,ddd,telefone,observacao) VALUES (?,?,?,?,?)',
+            (d['nome'], cpf_formatado, d.get('ddd', ''), tel_formatado, d.get('observacao', '')))
         conn.commit()
         conn.close()
         return jsonify({'ok': True})
@@ -192,8 +205,8 @@ def editar_pessoa():
     tel_formatado = formatar_telefone(d.get('telefone', ''))
     conn = get_db()
     try:
-        conn.execute('UPDATE pessoas SET nome=?,cpf=?,ddd=?,telefone=?,veiculo=?,observacao=? WHERE id=?',
-            (d['nome'], cpf_formatado, d.get('ddd', ''), tel_formatado, d.get('veiculo', ''), d.get('observacao', ''), d['id']))
+        conn.execute('UPDATE pessoas SET nome=?,cpf=?,ddd=?,telefone=?,observacao=? WHERE id=?',
+            (d['nome'], cpf_formatado, d.get('ddd', ''), tel_formatado, d.get('observacao', ''), d['id']))
         conn.commit()
         conn.close()
         return jsonify({'ok': True})
@@ -282,25 +295,6 @@ def fechar_servico():
     conn.close()
     return jsonify({'ok': True})
 
-
-# ── BOOTSTRAP: criação do primeiro usuário em produção (remover/desativar após uso) ──
-
-# @app.route('/bootstrap-admin')
-# def bootstrap_admin():
-#     token = request.args.get('token', '')
-#     esperado = os.environ.get('BOOTSTRAP_TOKEN', '')
-#     if not esperado or token != esperado:
-#         return "Acesso negado", 403
-
-#     username = request.args.get('username', '').strip()
-#     senha = request.args.get('senha', '').strip()
-#     if not username or not senha:
-#         return "Uso: /bootstrap-admin?token=XXX&username=admin&senha=senha123", 400
-
-#     ok, msg = criar_usuario(username, senha)
-#     if ok:
-#         return f"Usuário '{username}' criado com sucesso!"
-#     return f"Erro: {msg}", 400
 
 # ── CLI: criação do primeiro usuário ────────────────────────────────────
 

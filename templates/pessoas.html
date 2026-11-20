@@ -14,7 +14,7 @@
         <div style="overflow-x:auto;">
         <table>
             <thead><tr>
-                <th>Nome</th><th>CPF / Doc</th><th>DDD</th><th>Telefone</th><th>Veículo</th><th>Obs</th><th></th>
+                <th>Nome</th><th>CPF / Doc</th><th>DDD</th><th>Telefone</th><th>Obs</th><th></th>
             </tr></thead>
             <tbody id="tbody">
             {% for p in pessoas %}
@@ -23,7 +23,6 @@
                 <td data-label="CPF/Doc" class="mono" style="font-size:0.8rem;">{{ p.cpf | doc }}</td>
                 <td data-label="DDD" class="mono" style="color:var(--cinza-texto);">{{ p.ddd or '—' }}</td>
                 <td data-label="Telefone" class="mono" style="color:var(--cinza-texto);">{{ p.telefone | tel if p.telefone else '—' }}</td>
-                <td data-label="Veículo" style="color:var(--cinza-texto);">{{ p.veiculo or '—' }}</td>
                 <td data-label="Obs" style="color:var(--cinza-texto);font-size:0.78rem;max-width:140px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">{{ p.observacao or '—' }}</td>
                 <td data-actions style="white-space:nowrap;">
                     <button class="btn btn-sm btn-secondary"
@@ -32,7 +31,6 @@
                         data-cpf="{{ p.cpf | e }}"
                         data-ddd="{{ p.ddd or '' }}"
                         data-tel="{{ p.telefone or '' }}"
-                        data-veiculo="{{ p.veiculo or '' }}"
                         data-obs="{{ p.observacao or '' | e }}"
                         onclick="abrirEditBtn(this)">✏️</button>
                     <button class="btn btn-sm btn-danger" data-id="{{ p.id }}" data-nome="{{ p.nome | e }}" onclick="excluir(this.dataset.id, this.dataset.nome)">✕</button>
@@ -65,10 +63,6 @@
         <div class="form-group"><label>DDD</label><input type="text" id="eDDD" maxlength="3"></div>
         <div class="form-group"><label>Telefone</label><input type="text" id="eTel"></div>
     </div>
-    <div class="form-grid" style="grid-template-columns:1fr 1fr;margin-top:0.75rem;">
-        <div class="form-group"><label>Placa</label><input type="text" id="ePlaca" placeholder="Ex: RSI4G23" style="text-transform:uppercase;" maxlength="8"></div>
-        <div class="form-group"><label>Modelo</label><input type="text" id="eModelo" placeholder="Ex: Corsa, CG 160"></div>
-    </div>
     <div class="form-group" style="margin-top:0.75rem;"><label>Observação</label><textarea id="eObs"></textarea></div>
     <div class="modal-footer">
         <button class="btn btn-secondary" onclick="fecharEdit()">Cancelar</button>
@@ -86,25 +80,17 @@ function abrirEditBtn(btn){
     document.getElementById('eCpf').value=btn.dataset.cpf;
     document.getElementById('eDDD').value=btn.dataset.ddd;
     document.getElementById('eTel').value=btn.dataset.tel;
-    const v=btn.dataset.veiculo||'';
-    const partes=v.split(' - ');
-    document.getElementById('ePlaca').value=partes[0]||'';
-    document.getElementById('eModelo').value=partes.slice(1).join(' - ')||'';
     document.getElementById('eObs').value=btn.dataset.obs;
     document.getElementById('editOverlay').classList.add('open');
 }
 function fecharEdit(){document.getElementById('editOverlay').classList.remove('open');}
 async function salvarEdit(){
-    const placa=document.getElementById('ePlaca').value.trim().toUpperCase();
-    const modelo=document.getElementById('eModelo').value.trim();
-    const veiculo = placa && modelo ? `${placa} - ${modelo}` : placa || modelo;
     const r=await api('/api/editar_pessoa',{
         id:parseInt(document.getElementById('eId').value),
         nome:document.getElementById('eNome').value.trim(),
         cpf:document.getElementById('eCpf').value.trim(),
         ddd:document.getElementById('eDDD').value.trim(),
         telefone:document.getElementById('eTel').value.trim(),
-        veiculo,
         observacao:document.getElementById('eObs').value.trim(),
     });
     if(r.ok){toast('Atualizado!');fecharEdit();setTimeout(()=>location.reload(),700);}

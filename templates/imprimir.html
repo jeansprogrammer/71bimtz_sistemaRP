@@ -66,7 +66,7 @@ td, td *{color:#000 !important;text-decoration:none !important;}
 .td-cpf{text-align:center;width:11%;}
 .td-ddd{text-align:center;width:3.5%;}
 .td-tel{text-align:center;width:9%;}
-.td-veiculo{width:12%;}
+
 .td-cracha{text-align:center;width:6%;}
 .td-secao{text-align:center;width:7%;}
 .td-part{text-align:center;width:3.5%;}
@@ -170,7 +170,7 @@ td, td *{color:#000 !important;text-decoration:none !important;}
             <th rowspan="2" class="td-nome">Nome Completo</th>
             <th rowspan="2" class="td-cpf">CPF ou Doc. de<br>Identificação<br>(Org Exp)</th>
             <th colspan="2">Telefone Contato</th>
-            <th rowspan="2" class="td-veiculo">Placa / Veículo</th>
+
             <th rowspan="2" class="td-cracha">Crachá</th>
             <th rowspan="2" class="td-secao">Seção</th>
             <th colspan="2">Motivo<br>(Marcar X)</th>
@@ -193,7 +193,7 @@ td, td *{color:#000 !important;text-decoration:none !important;}
         <td class="td-cpf">{{ e.cpf | doc }}</td>
         <td class="td-ddd">{{ e.ddd or '' }}</td>
         <td class="td-tel">{{ e.telefone | tel }}</td>
-        <td class="td-veiculo" title="{{ e.veiculo or '' }}">{{ e.veiculo or '' }}</td>
+
         <td class="td-cracha">{% if e.cracha_tipo and e.cracha_numero %}{{ e.cracha_tipo }}-{{ e.cracha_numero }}{% endif %}</td>
         <td class="td-secao">{{ e.secao or '' }}</td>
         <td class="td-part"><span class="x-marca">{% if e.motivo == 'Particular' %}X{% endif %}</span></td>
@@ -211,7 +211,7 @@ td, td *{color:#000 !important;text-decoration:none !important;}
     {% endfor %}
     {% for i in range(linhas_pagina_atual - bloco|length) %}
     <tr>
-        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
         <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
     </tr>
     {% endfor %}
