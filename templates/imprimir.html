@@ -27,9 +27,6 @@ body{
 .btn-imprimir{padding:9px 24px;background:#2d5a1b;color:#fff;border:none;border-radius:4px;
     font-size:11pt;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;}
 .btn-imprimir:hover{background:#3d7a25;}
-.btn-pdf{padding:9px 24px;background:#c8a83c;color:#1a3510;border:none;border-radius:4px;
-    font-size:11pt;font-weight:bold;cursor:pointer;font-family:Arial,sans-serif;}
-.btn-pdf:hover{background:#e8c84c;}
 
 .cabecalho{display:grid;grid-template-columns:90px 1fr 115px;align-items:start;margin-bottom:8px;}
 .cab-esq{display:flex;flex-direction:column;align-items:center;}
@@ -53,11 +50,11 @@ table{width:100%;border-collapse:collapse;font-size:10pt;table-layout:fixed;marg
 th{background:#e8e8e8;color:#000;padding:3px 3px;text-align:center;font-size:10pt;font-weight:bold;
     text-transform:uppercase;border:1px solid #000;line-height:1.2;overflow:hidden;}
 td{padding:1px 3px;border:1px solid #000;vertical-align:middle;font-size:10pt;
-    height:16px;max-height:16px;line-height:16px;
+    height:15px;max-height:15px;line-height:15px;
     font-weight:normal;text-transform:uppercase;color:#000 !important;
     overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
 td, td *{color:#000 !important;text-decoration:none !important;}
-tr{height:16px;}
+tr{height:15px;}
 .td-nome{width:19%;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
 .td-cpf{text-align:center;width:11.5%;}
 .td-ddd{text-align:center;width:2.5%;}
@@ -97,12 +94,11 @@ tr{height:16px;}
 
 <div class="barra-acoes no-print">
     <button class="btn-imprimir" onclick="window.print()">🖨️ IMPRIMIR RELAÇÃO</button>
-    <a class="btn-pdf" href="{% if servico %}/imprimir/{{ servico.id }}/pdf{% else %}/imprimir/pdf{% endif %}" style="text-decoration:none;display:inline-block;">📄 SALVAR COMO PDF</a>
 </div>
 
 <div class="folha">
 
-{% set rows_pagina1 = 19 %}
+{% set rows_pagina1 = 18 %}
 {% set rows_outras = 26 %}
 {% set total = entradas|length %}
 {% if total <= rows_pagina1 %}
