@@ -57,10 +57,10 @@ td{padding:1px 3px;border:1px solid #000;vertical-align:middle;font-size:10pt;
     font-weight:normal;text-transform:uppercase;color:#000 !important;
     overflow:hidden;white-space:nowrap;text-overflow:ellipsis;}
 td, td *{color:#000 !important;text-decoration:none !important;}
-.td-nome{width:30%;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
+.td-nome{width:24%;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
 .td-cpf{text-align:center;width:11.5%;}
 .td-ddd{text-align:center;width:2.5%;}
-.td-tel{text-align:center;width:10%;}
+.td-tel{text-align:center;width:16%;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
 
 .td-cracha{text-align:center;width:6%;}
 .td-secao{text-align:center;width:12%;white-space:nowrap;text-overflow:ellipsis;overflow:hidden;}
@@ -198,9 +198,9 @@ td, td *{color:#000 !important;text-decoration:none !important;}
     </tr>
     {% endfor %}
     {% for i in range(linhas_pagina_atual - bloco|length) %}
-    <tr>
-        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
-        <td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>
+    <tr style="height:11px;">
+        <td style="height:11px;">&nbsp;</td><td style="height:11px;">&nbsp;</td><td style="height:11px;">&nbsp;</td><td style="height:11px;">&nbsp;</td>
+        <td style="height:11px;">&nbsp;</td><td style="height:11px;">&nbsp;</td><td style="height:11px;">&nbsp;</td><td style="height:11px;">&nbsp;</td><td style="height:11px;">&nbsp;</td><td style="height:11px;">&nbsp;</td><td style="height:11px;">&nbsp;</td>
     </tr>
     {% endfor %}
     </tbody>
